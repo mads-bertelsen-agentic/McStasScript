@@ -4,7 +4,7 @@
 
 Prototype for an API that allows interaction with McStas through an interface like Jupyter Notebooks, created under WP5 of PaNOSC.
 
-Full documentation can be found [here](https://mads-bertelsen.github.io)!
+Full documentation can be found [here](https://panosc-vinyl.github.io/McStasScript/)!
 
 ## Installation
 
