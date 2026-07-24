@@ -1018,9 +1018,9 @@ class TestApi(unittest.TestCase):
             _get_renderer("unknown_backend")
 
     def test_get_renderer_pythreejs_reports_missing_optional_module(self):
-        """The pythreejs backend gives an actionable missing-dependency error."""
+        """The pythreejs backend reports missing optional dependencies."""
         with patch.dict("sys.modules", {"pythreejs": None}):
-            with self.assertRaisesRegex(ImportError, "pythreejs.*geometry-viewer"):
+            with self.assertRaisesRegex(ImportError, "pythreejs.*optional module"):
                 _get_renderer("pythreejs")
 
     def test_matplotlib_does_not_import_pythreejs(self):
