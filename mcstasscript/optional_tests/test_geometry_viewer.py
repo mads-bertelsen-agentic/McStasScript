@@ -58,6 +58,11 @@ from mcstasscript.geometry_viewer.config import (
 )
 from mcstasscript.geometry_viewer.api import _get_renderer, view, view_with_guess, view_with_json
 from mcstasscript.geometry_viewer.expression import safe_eval, UnsafeExpressionError
+from mcstasscript.geometry_viewer.renderer.pythreejs import (
+    PyThreejsRenderer,
+    MaterialLibrary,
+    _plain_component_text,
+)
 
 
 # Path to the mcdisplay JSON fixture
@@ -98,7 +103,6 @@ class TestApi(unittest.TestCase):
         PyThreejsRenderer instance.
         """
         renderer = _get_renderer("pythreejs")
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         self.assertIsInstance(renderer, PyThreejsRenderer)
 
     def test_get_renderer_pythreejs_reports_missing_optional_module(self):
@@ -111,7 +115,6 @@ class TestPyThreejsComponentSelection(unittest.TestCase):
     """Tests for picking a visual and showing its source component."""
 
     def test_picker_maps_visual_to_component_details(self):
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
 
         component = make_mock_component("selected")
@@ -142,7 +145,6 @@ class TestPyThreejsComponentSelection(unittest.TestCase):
         self.assertEqual(details.value, "Click a component in the scene.")
 
     def test_picker_maps_line_visual_to_component_details(self):
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         component = make_mock_component("line_selected")
         component.component_name = "Line"
@@ -161,7 +163,6 @@ class TestPyThreejsComponentSelection(unittest.TestCase):
         self.assertEqual(details.value, str(component))
 
     def test_navigator_selection_updates_component_details(self):
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
 
         component = make_mock_component("selected")
@@ -185,7 +186,6 @@ class TestPyThreejsComponentSelection(unittest.TestCase):
         self.assertEqual(details.value, previous_value)
 
     def test_component_details_strip_terminal_formatting(self):
-        from mcstasscript.geometry_viewer.renderer.pythreejs import _plain_component_text
 
         class ColoredComponent:
             def __str__(self):
@@ -210,7 +210,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
     """Tests for PyThreejsRenderer intensity colormode."""
 
     def setUp(self):
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         self.intensity_map = {"comp1": 1.0, "comp2": 10.0, "comp3": 100.0}
         self.renderer = PyThreejsRenderer(
             intensity_map=self.intensity_map,
@@ -253,14 +252,12 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_colormode_selector_without_map_omits_intensity(self):
         """Intensity is unavailable until a map or controls are provided."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         selector = renderer.create_colormode_selector()
         self.assertNotIn("Intensity", selector.options)
 
     def test_colormode_selector_with_controls_has_intensity(self):
         """Intensity is available when the renderer can run diagnostics."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         renderer.create_intensity_controls()
         selector = renderer.create_colormode_selector()
@@ -268,7 +265,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_no_intensity_map_falls_through(self):
         """Without intensity_map, default colormode should work as before."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(colormode="default")
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -300,7 +296,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_orders_of_mag_limits_log_colorbar(self):
         """Log colorbar keeps the maximum and limits its lower decade range."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"low": 1e-9, "high": 1.0},
@@ -314,7 +309,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_negative_intensity_data_uses_linear_colorbar(self):
         """Negative values disable logarithmic scaling and remain visible."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"low": -2.0, "high": 1.0},
@@ -328,7 +322,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_run_failure_warns_and_marks_data_stale(self):
         """Intensity failures should be visible and leave the widget stale."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(instrument_object=MagicMock())
         renderer.create_intensity_controls()
         button = renderer._intensity_widgets["run_button"]
@@ -342,7 +335,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_run_uses_diagnostic_ncount_setting(self):
         """The ncount widget value persists through the diagnostic reset."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(instrument_object=MagicMock())
         renderer.create_intensity_controls()
@@ -378,7 +370,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_selecting_stale_intensity_mode_greys_components(self):
         """Selecting intensity mode greys components until data is available."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer()
         comp_model = ComponentModel(make_mock_component("comp"))
@@ -395,7 +386,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_log_scale_control_requires_nonnegative_data(self):
         """Log scale is enabled only for nonnegative intensity data."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer()
         renderer.create_intensity_controls()
@@ -425,7 +415,6 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_grey_all_components(self):
         """_grey_all_components sets all component colors to grey."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -436,19 +425,16 @@ class TestPyThreejsIntensity(unittest.TestCase):
 
     def test_data_stale_default(self):
         """Without intensity_map, _data_stale should be True."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         self.assertTrue(renderer._data_stale)
 
     def test_data_not_stale_with_map(self):
         """With intensity_map, _data_stale should be False."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(intensity_map={"a": 1.0})
         self.assertFalse(renderer._data_stale)
 
     def test_colorbar_stale_intensity(self):
         """In intensity mode without data, colorbar VBox has canvas but no colorbar content."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(colormode="intensity")
         cb = renderer.create_colorbar()
@@ -460,7 +446,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
 
     def test_colorbar_intensity_mode(self):
         """In intensity mode, create_colorbar should return a VBox with content."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -472,7 +457,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
 
     def test_colorbar_default_mode(self):
         """In default mode, create_colorbar should return a VBox with canvas but no colorbar."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(colormode="default")
         cb = renderer.create_colorbar()
@@ -481,7 +465,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
 
     def test_colorbar_component_mode(self):
         """In component mode, create_colorbar should return a VBox with content."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(colormode="component", num_components=10)
         cb = renderer.create_colorbar()
@@ -490,13 +473,11 @@ class TestPyThreejsColorbar(unittest.TestCase):
 
     def test_colorbar_label_stored(self):
         """colorbar_label should be stored on the renderer."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(colorbar_label="Wavelength [Å]")
         self.assertEqual(renderer.colorbar_label, "Wavelength [Å]")
 
     def test_colorbar_no_duplicates_on_update(self):
         """Updating colorbar mode should not accumulate multiple colorbars."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -526,7 +507,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
         """
         import matplotlib.pyplot as plt
         import matplotlib._pylab_helpers as ph
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         # Ensure clean state
         plt.close("all")
@@ -574,7 +554,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
         Figure + FigureCanvasNbAgg construction, draw_idle must succeed
         and the canvas must remain the same live instance.
         """
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipympl.backend_nbagg as ipympl_backend
 
         renderer = PyThreejsRenderer(
@@ -618,7 +597,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
         Regression: after intensity mode set a custom label, switching back
         to component mode kept that label instead of 'Component index'.
         """
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
 
         renderer = PyThreejsRenderer(
@@ -662,7 +640,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
         Regression: changing intensity aggregation changed the label, but
         selecting 'total' should restore the intensity label.
         """
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -689,7 +666,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
 
     def test_colorbar_label_explicit_api_preserved(self):
         """Explicit colorbar_label from API takes priority over computed label."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -708,7 +684,6 @@ class TestPyThreejsColorbar(unittest.TestCase):
 
     def test_colorbar_label_component_ignores_intensity_state(self):
         """Component mode label is unaffected by intensity computed label."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             colormode="component",
@@ -730,7 +705,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_init_without_component_colors(self):
         """Renderer without component_colors should have empty map."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         self.assertEqual(renderer.component_colors_map, {})
         self.assertFalse(renderer._custom_colors_active)
@@ -738,7 +712,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_init_with_component_colors(self):
         """Renderer with component_colors should store the mapping."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         color_map = {"guide1": "#ff0000", "sample": "#00ff00"}
         renderer = PyThreejsRenderer(component_colors=color_map)
         self.assertEqual(renderer.component_colors_map, color_map)
@@ -746,7 +719,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_create_custom_colors_checkbox_with_map(self):
         """create_custom_colors_checkbox returns a Checkbox when map is provided."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(component_colors={"comp1": "#ff0000"})
         checkbox = renderer.create_custom_colors_checkbox()
@@ -757,14 +729,12 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_create_custom_colors_checkbox_without_map(self):
         """create_custom_colors_checkbox returns None when no map provided."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         checkbox = renderer.create_custom_colors_checkbox()
         self.assertIsNone(checkbox)
 
     def test_apply_custom_colors(self):
         """_apply_custom_colors applies colors to registered components."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"test_comp": "#ff0000", "other": "#00ff00"})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -777,7 +747,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_apply_custom_colors_partial_match(self):
         """Mapped components get custom color; unmapped keep their existing color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"comp_a": "#ff0000"})
         comp_a = make_mock_component("comp_a")
         comp_a_model = ComponentModel(comp_a)
@@ -796,7 +765,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_reset_to_colormode_colors(self):
         """_reset_to_colormode_colors restores default colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"test_comp": "#ff0000"})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -811,7 +779,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_checkbox_toggle_on(self):
         """Checking the checkbox applies custom colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"test_comp": "#ff0000"})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -826,7 +793,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_checkbox_toggle_off(self):
         """Unchecking the checkbox resets to colormode colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"test_comp": "#ff0000"})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -842,7 +808,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_checkbox_on_only_changes_mapped_components(self):
         """Checking with a single-component map only changes that one component."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"guide1": "#ff0000"})
         comp1 = make_mock_component("guide1")
         comp1_model = ComponentModel(comp1)
@@ -870,7 +835,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_checkbox_off_restores_colormode(self):
         """Unchecking restores all components to active colormode colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"guide1": "#ff0000"})
         comp1 = make_mock_component("guide1")
         comp1_model = ComponentModel(comp1)
@@ -892,7 +856,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_intensity_mode_unchecked_uses_intensity(self):
         """In intensity mode with checkbox unchecked, all components use intensity colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"guide1": 1.0, "sample1": 100.0},
@@ -920,7 +883,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_intensity_mode_check_uncheck_roundtrip(self):
         """Intensity mode: check applies custom, uncheck restores intensity colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"guide1": 1.0, "sample1": 100.0},
@@ -951,7 +913,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_colormode_change_preserves_custom_colors(self):
         """Colormode change keeps checkbox checked; mapped components retain custom color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             component_colors={"comp_a": "#ff0000"},
             colormode="component",
@@ -983,7 +944,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_intensity_refresh_preserves_custom_colors(self):
         """Intensity data refresh keeps mapped components at custom color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"comp_a": 1.0, "comp_b": 100.0},
@@ -1019,7 +979,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_grey_all_preserves_custom_colors(self):
         """_grey_all_components greys unmapped but preserves mapped custom colors."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"comp_a": "#ff0000"})
         comp_a = make_mock_component("comp_a")
         comp_a_model = ComponentModel(comp_a)
@@ -1040,14 +999,12 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_empty_component_colors_no_checkbox(self):
         """Empty dict for component_colors should not create a checkbox."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={})
         checkbox = renderer.create_custom_colors_checkbox()
         self.assertIsNone(checkbox)
 
     def test_apply_custom_colors_empty_map(self):
         """_apply_custom_colors with empty map is a no-op."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -1061,7 +1018,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_colormode_color_for_index_default(self):
         """_colormode_color_for_index returns DEFAULT_COLORS in default mode."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -1073,7 +1029,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_colormode_color_for_index_component_mode(self):
         """_colormode_color_for_index returns viridis colors in component mode."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(colormode="component", num_components=5)
         c0 = renderer._colormode_color_for_index(0)
         c4 = renderer._colormode_color_for_index(4)
@@ -1083,7 +1038,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_colormode_color_for_index_intensity_mode(self):
         """_colormode_color_for_index returns intensity colors in intensity mode."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"comp_a": 1.0, "comp_b": 100.0},
@@ -1106,7 +1060,6 @@ class TestPyThreejsCustomColors(unittest.TestCase):
 
     def test_apply_custom_colors_overlays_on_intensity(self):
         """Custom colors overlay on top of intensity colormode for unmapped components."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"comp_a": 1.0, "comp_b": 100.0},
@@ -1281,7 +1234,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_materials_not_shared_between_components(self):
         """Materials for different components must be distinct objects."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         children1, children2 = self._render_two_components(renderer)
         mat1 = children1[0].material
@@ -1291,7 +1243,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_changing_one_component_color_does_not_affect_other(self):
         """update_component_color on comp1 must not change comp2's material color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         children1, children2 = self._render_two_components(renderer)
         orig_color2 = children2[0].material.color
@@ -1302,7 +1253,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_custom_single_component_mapping_affects_only_that_component(self):
         """Custom color for comp_a must not change comp_b's color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"comp_a": "#ff0000"})
         comp_a = make_mock_component("comp_a")
         model_a = ComponentModel(comp_a)
@@ -1324,7 +1274,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_intensity_recoloring_isolated_between_components(self):
         """Intensity recoloring of one component must not affect another's material."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"comp1": 1.0, "comp2": 100.0},
@@ -1339,7 +1288,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_intensity_recoloring_independent_with_checkbox_enabled(self):
         """Intensity recoloring isolation holds when custom colors checkbox is active."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"comp1": 1.0, "comp2": 100.0},
@@ -1354,7 +1302,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_shapes_within_same_component_share_material(self):
         """Multiple shapes within the same component may share a material."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("multi_shape")
         model = ComponentModel(comp)
@@ -1370,7 +1317,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_material_library_cache_key_includes_component_index(self):
         """MaterialLibrary cache key must include component_index to ensure isolation."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import MaterialLibrary
         lib = MaterialLibrary(colors=["#ff0000", "#00ff00"])
         mat0 = lib.get_material(component_index=0)
         mat1 = lib.get_material(component_index=1)
@@ -1383,7 +1329,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_material_library_without_component_index(self):
         """Without component_index, materials are cached globally (backward compat)."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import MaterialLibrary
         lib = MaterialLibrary(colors=["#ff0000", "#00ff00"])
         mat1 = lib.get_material()
         mat2 = lib.get_material()
@@ -1392,7 +1337,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_update_component_color_reflects_in_component_colors_dict(self):
         """update_component_color updates both the material and component_colors dict."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         children1, _ = self._render_two_components(renderer)
         renderer.update_component_color(0, "#ff0000")
@@ -1401,7 +1345,6 @@ class TestMaterialIsolation(unittest.TestCase):
 
     def test_multiple_components_same_color_independent(self):
         """Even when components happen to have the same color, materials are independent."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         # Force same color by using a small color palette
         renderer = PyThreejsRenderer(colors=["#aaaaaa"])
         children1, children2 = self._render_two_components(renderer)
@@ -1418,7 +1361,6 @@ class TestNcountDropdownAndLabel(unittest.TestCase):
 
     def test_aggregate_dropdown_includes_ncount(self):
         """Aggregate dropdown includes 'ncount' option mapping to 'ncount'."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
             colormode="intensity",
@@ -1430,7 +1372,6 @@ class TestNcountDropdownAndLabel(unittest.TestCase):
 
     def test_aggregate_dropdown_still_has_all_original_options(self):
         """Adding ncount does not remove any existing aggregate options."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
             colormode="intensity",
@@ -1443,7 +1384,6 @@ class TestNcountDropdownAndLabel(unittest.TestCase):
     def test_ncount_colorbar_label_in_apply_intensity(self):
         """_apply_intensity_from_data sets 'N rays' label for ncount aggregation."""
         from unittest.mock import patch
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -1477,7 +1417,6 @@ class TestNcountDropdownAndLabel(unittest.TestCase):
     def test_cached_aggregate_refresh_ncount(self):
         """Changing aggregate dropdown to ncount re-applies from cached data."""
         from unittest.mock import patch
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -1515,7 +1454,6 @@ class TestNcountDropdownAndLabel(unittest.TestCase):
     def test_cached_aggregate_refresh_total_after_ncount(self):
         """Switching from ncount back to total restores 'Intensity [n/s]' label."""
         from unittest.mock import patch
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0, "b": 10.0},
@@ -1554,7 +1492,6 @@ class TestNcountDropdownAndLabel(unittest.TestCase):
 class TestNcountPreservesExistingBehavior(unittest.TestCase):
     def test_default_aggregate_is_still_total(self):
         """Default aggregate value in dropdown is still 'total'."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             intensity_map={"a": 1.0},
             colormode="intensity",
@@ -1566,7 +1503,6 @@ class TestNcountPreservesExistingBehavior(unittest.TestCase):
     def test_custom_colors_unaffected_by_ncount(self):
         """Custom colors overlay works correctly when ncount aggregation is active."""
         from unittest.mock import patch
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
 
         renderer = PyThreejsRenderer(
             colormode="intensity",
@@ -1620,7 +1556,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_init_without_component_opacity(self):
         """Renderer without component_opacity should have empty map."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         self.assertEqual(renderer.component_opacity_map, {})
         self.assertFalse(renderer._custom_opacities_active)
@@ -1628,7 +1563,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_init_with_component_opacity(self):
         """Renderer with component_opacity should store the mapping."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         opacity_map = {"guide1": 0.3, "sample": 0.7}
         renderer = PyThreejsRenderer(component_opacity=opacity_map)
         self.assertEqual(renderer.component_opacity_map, opacity_map)
@@ -1636,13 +1570,11 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_init_validates_non_numeric_value(self):
         """Non-numeric opacity values should raise TypeError."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         with self.assertRaises(TypeError):
             PyThreejsRenderer(component_opacity={"guide1": "0.5"})
 
     def test_init_validates_out_of_range_value(self):
         """Opacity values outside [0.0, 1.0] should raise ValueError."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         with self.assertRaises(ValueError):
             PyThreejsRenderer(component_opacity={"guide1": 1.5})
         with self.assertRaises(ValueError):
@@ -1650,13 +1582,11 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_init_converts_int_to_float(self):
         """Integer opacity values should be converted to float."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"guide1": 0, "sample": 1})
         self.assertEqual(renderer.component_opacity_map, {"guide1": 0.0, "sample": 1.0})
 
     def test_create_custom_opacities_checkbox_with_map(self):
         """create_custom_opacities_checkbox returns a Checkbox when map is provided."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         import ipywidgets as ipw
         renderer = PyThreejsRenderer(component_opacity={"comp1": 0.5})
         checkbox = renderer.create_custom_opacities_checkbox()
@@ -1667,14 +1597,12 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_create_custom_opacities_checkbox_without_map(self):
         """create_custom_opacities_checkbox returns None when no map provided."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         checkbox = renderer.create_custom_opacities_checkbox()
         self.assertIsNone(checkbox)
 
     def test_apply_custom_opacities(self):
         """_apply_custom_opacities applies opacities to registered components."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"test_comp": 0.3})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -1687,7 +1615,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_apply_custom_opacities_partial_match(self):
         """Mapped components get custom opacity; unmapped keep their existing opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"comp_a": 0.2})
         comp_a = make_mock_component("comp_a")
         comp_a_model = ComponentModel(comp_a)
@@ -1706,7 +1633,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_reset_to_base_opacities(self):
         """_reset_to_base_opacities restores original opacities."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"test_comp": 0.3})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -1722,7 +1648,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_checkbox_toggle_on(self):
         """Checking the checkbox applies custom opacities."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"test_comp": 0.25})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -1737,7 +1662,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_checkbox_toggle_off(self):
         """Unchecking the checkbox resets to base opacities."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"test_comp": 0.25})
         comp = make_mock_component("test_comp")
         comp_model = ComponentModel(comp)
@@ -1754,7 +1678,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_checkbox_on_only_changes_mapped_components(self):
         """Checking with a single-component map only changes that one component."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"guide1": 0.15})
         comp1 = make_mock_component("guide1")
         comp1_model = ComponentModel(comp1)
@@ -1780,7 +1703,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_checkbox_off_restores_base_opacity(self):
         """Unchecking restores all components to base opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"guide1": 0.15})
         comp1 = make_mock_component("guide1")
         comp1_model = ComponentModel(comp1)
@@ -1804,14 +1726,12 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_empty_component_opacity_no_checkbox(self):
         """Empty dict for component_opacity should not create a checkbox."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={})
         checkbox = renderer.create_custom_opacities_checkbox()
         self.assertIsNone(checkbox)
 
     def test_apply_custom_opacities_empty_map(self):
         """_apply_custom_opacities with empty map is a no-op."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -1825,7 +1745,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_opacity_preserves_color(self):
         """Applying custom opacity must not change the component's color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             component_colors={"test_comp": "#ff0000"},
             component_opacity={"test_comp": 0.3},
@@ -1842,7 +1761,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_opacity_independent_of_colors(self):
         """Custom opacity checkbox is independent from custom colors checkbox."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             component_colors={"test_comp": "#ff0000"},
             component_opacity={"test_comp": 0.3},
@@ -1871,7 +1789,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_grey_all_preserves_custom_opacities(self):
         """_grey_all_components greys unmapped but preserves mapped custom opacities."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"comp_a": 0.1})
         comp_a = make_mock_component("comp_a")
         comp_a_model = ComponentModel(comp_a)
@@ -1891,7 +1808,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_intensity_refresh_preserves_custom_opacities(self):
         """Intensity data refresh keeps mapped components at custom opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             colormode="intensity",
             intensity_map={"comp_a": 1.0, "comp_b": 100.0},
@@ -1925,7 +1841,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_colormode_change_preserves_custom_opacities(self):
         """Colormode change keeps checkbox checked; mapped components retain custom opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             component_opacity={"comp_a": 0.15},
             colormode="component",
@@ -1954,7 +1869,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_update_component_opacity_sets_material(self):
         """update_component_opacity sets material.opacity and material.transparent."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -1973,7 +1887,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_original_opacity_captured_at_render(self):
         """Original opacity is captured from rendered mesh at render time."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -1985,7 +1898,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_reset_restores_shape_specific_opacity(self):
         """Reset restores the shape-specific opacity (e.g., 0.8 for box)."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"test": 0.1})
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -2000,7 +1912,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_reset_restores_each_shape_opacity(self):
         """A component with mixed shapes restores every base opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"test": 0.1})
         comp = make_mock_component("test")
         comp_model = ComponentModel(comp)
@@ -2019,7 +1930,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_cylinder_shape_specific_opacity(self):
         """Cylinder opacity is size-based and correctly captured."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp = make_mock_component("cyl")
         comp_model = ComponentModel(comp)
@@ -2032,7 +1942,6 @@ class TestPyThreejsCustomOpacities(unittest.TestCase):
 
     def test_both_color_and_opacity_together(self):
         """Custom colors and opacities can be active simultaneously."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(
             component_colors={"comp_a": "#ff0000"},
             component_opacity={"comp_a": 0.2},
@@ -2166,7 +2075,6 @@ class TestMaterialIsolationOpacity(unittest.TestCase):
 
     def test_changing_one_component_opacity_does_not_affect_other(self):
         """update_component_opacity on comp1 must not change comp2's material opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         comp1 = make_mock_component("comp1")
         model1 = ComponentModel(comp1)
@@ -2188,7 +2096,6 @@ class TestMaterialIsolationOpacity(unittest.TestCase):
 
     def test_custom_single_component_opacity_affects_only_that_component(self):
         """Custom opacity for comp_a must not change comp_b's opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"comp_a": 0.15})
         comp_a = make_mock_component("comp_a")
         model_a = ComponentModel(comp_a)
@@ -2210,7 +2117,6 @@ class TestMaterialIsolationOpacity(unittest.TestCase):
 
     def test_custom_opacity_does_not_affect_color(self):
         """Applying custom opacity must not mutate the material color."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_opacity={"comp_a": 0.15})
         comp_a = make_mock_component("comp_a")
         model_a = ComponentModel(comp_a)
@@ -2223,7 +2129,6 @@ class TestMaterialIsolationOpacity(unittest.TestCase):
 
     def test_custom_color_does_not_affect_opacity(self):
         """Applying custom color must not mutate the material opacity."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer(component_colors={"comp_a": "#ff0000"})
         comp_a = make_mock_component("comp_a")
         model_a = ComponentModel(comp_a)
@@ -2237,7 +2142,6 @@ class TestMaterialIsolationOpacity(unittest.TestCase):
 class TestSphereShape(unittest.TestCase):
     def test_pythreejs_render(self):
         """PyThreejsRenderer can render a SphereShape."""
-        from mcstasscript.geometry_viewer.renderer.pythreejs import PyThreejsRenderer
         renderer = PyThreejsRenderer()
         renderer._temp_color = None  # Initialize for standalone render_shape
         shape = SphereShape(radius=0.5)
