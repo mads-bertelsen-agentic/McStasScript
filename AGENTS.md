@@ -19,7 +19,8 @@ mcstasscript/
 ├── integration_tests/       # End-to-end tests that run actual McStas simulations
 ├── interface/               # Core API: McStas_instr builder, data loading, plotting, Configurator
 ├── jb_interface/            # Jupyter widget interface: interactive simulation control and plotting
-├── tests/                   # Unit tests (20+ modules) with fixtures
+├── tests/                   # Base unit tests with regular dependencies
+├── optional_tests/          # Tests requiring the optional pythreejs dependency
 └── tools/                   # Specialized tools: Cryostat builder, instrument checker, NCrystal integration
 ```
 
@@ -40,6 +41,19 @@ Run with `python -m unittest`. For example:
 python -m unittest mcstasscript.tests.test_instrument_diagnostics -v
 ```
 
+### Optional Tests
+
+The optional suite requires `pythreejs`; `ipympl` is installed with the regular
+package dependencies:
+
+```bash
+python -m pip install pythreejs
+python -m pytest mcstasscript/optional_tests/
+```
+
+The GitHub Actions workflow runs the base tests first without `pythreejs`, then
+installs it and runs the optional suite.
+
 ### Integration Tests
 
 Integration tests require a McStas installation. Run with:
@@ -47,6 +61,26 @@ Integration tests require a McStas installation. Run with:
 ```bash
 python -m unittest discover -s mcstasscript/integration_tests -v
 ```
+
+### Test Dependencies
+
+The repository has three test tiers, documented by the README in each folder:
+`tests/` uses the regular package dependencies including `ipympl`,
+`optional_tests/` additionally uses `pythreejs`, and `integration_tests/`
+requires an installed McStas/McXtrace toolchain.
+
+### Package Data And Publishing
+
+McStasScript is published to PyPI. The conda-forge feedstock automatically
+picks up new PyPI releases; it is maintained at
+https://github.com/conda-forge/mcstasscript-feedstock.
+
+When adding non-Python files needed by tests or runtime code, add them to
+`MANIFEST.in` so they are included in source distributions and available to
+the feedstock build. Use an explicit `include` for individual files and
+`graft` for directories of package data. Test fixtures such as `.instr`,
+`.comp`, `.json`, and simulation data must not rely on being present only in a
+working checkout.
 
 ## GitHub PR Review Comments (via gh CLI)
 
