@@ -2,7 +2,8 @@ import io
 import os
 import unittest
 import unittest.mock
-import matplotlib as plt
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend to avoid GUI windows in tests
 import threading
 
 from mcstasscript.interface import instr, functions

@@ -2431,9 +2431,11 @@ class TestMcStas_instr(unittest.TestCase):
                                     cwd=run_path)
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    @unittest.mock.patch("mcstasscript.geometry_viewer.mcdisplay.webbrowser.open")
     @unittest.mock.patch("mcstasscript.geometry_viewer.mcdisplay.os.path.exists")
     @unittest.mock.patch("subprocess.run")
-    def test_show_instrument_basic(self, mock_sub, mock_exists, mock_stdout):
+    def test_show_instrument_basic(self, mock_sub, mock_exists,
+                                   mock_webbrowser, mock_stdout):
         """
         Test show_instrument with webgl-classic backend makes correct system calls.
         """
@@ -2475,6 +2477,13 @@ class TestMcStas_instr(unittest.TestCase):
                                     stderr=subprocess.PIPE,
                                     universal_newlines=True,
                                     cwd=".")
+
+        # In a terminal (non-notebook) the classic HTML viewer opens a browser.
+        # The mock prevents a real browser window during automated tests while
+        # still verifying the intended browser-launch behavior is preserved.
+        expected_html_path = os.path.join(
+            THIS_DIR, "test_instrument_mcdisplay", "index.html")
+        mock_webbrowser.assert_called_once_with("file://" + expected_html_path)
 
     @unittest.mock.patch.dict("sys.modules", {"pythreejs": None, "ipympl": None})
     @unittest.mock.patch("mcstasscript.geometry_viewer.view")
