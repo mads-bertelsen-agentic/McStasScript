@@ -1,4 +1,3 @@
-import os
 import shutil
 import subprocess
 import tempfile
@@ -15,9 +14,10 @@ class TestAddTest(unittest.TestCase):
             self.skipTest("mctest is not available")
 
         instrument_name = "integration_test_add_test"
-        expected_intensity = 6.283185307179586e10
+        expected_intensity = 6.283185307179586e8
 
-        with tempfile.TemporaryDirectory() as instrument_dir:
+        with tempfile.TemporaryDirectory() as instrument_dir, \
+                tempfile.TemporaryDirectory() as test_output:
             instrument = McStas_instr(instrument_name,
                                       input_path=instrument_dir)
 
@@ -43,7 +43,6 @@ class TestAddTest(unittest.TestCase):
             instrument.add_test("monitor", intensity=expected_intensity)
             instrument.write_full_instrument()
 
-            test_output = os.path.join(instrument_dir, "mctest_output")
             result = subprocess.run(
                 ["mctest", "--local", instrument_dir,
                  "--testdir", test_output,
@@ -57,3 +56,4 @@ class TestAddTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, msg=result.stdout)
         self.assertIn("SUCCESS", result.stdout)
+        self.assertIn("[val:", result.stdout, msg=result.stdout)

@@ -8,6 +8,8 @@ import subprocess
 import copy
 import warnings
 import re
+import math
+import shlex
 
 from libpyvinyl.BaseCalculator import BaseCalculator
 from libpyvinyl.Parameters.Collections import CalculatorParameters
@@ -823,9 +825,11 @@ class McCode_instr(BaseCalculator):
                                      + "monitor '" + str(Name_of_monitor) + "'.")
 
         try:
-            float(intensity)
+            intensity_value = float(intensity)
+            if isinstance(intensity, bool) or not math.isfinite(intensity_value):
+                raise ValueError
         except (TypeError, ValueError):
-            raise ValueError("intensity must be a number.")
+            raise ValueError("intensity must be a finite number.")
 
         if not hasattr(self, "_test_list"):
             self._test_list = []
@@ -836,9 +840,8 @@ class McCode_instr(BaseCalculator):
     @staticmethod
     def _format_example_value(value):
         if isinstance(value, str):
-            if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
-                return value
-            return '"' + value.replace('"', '\\"') + '"'
+            # mctest inserts parameter values into a shell command.
+            return shlex.quote(value)
         return str(value)
 
     def _format_test(self, test):

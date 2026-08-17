@@ -7,6 +7,7 @@ import unittest.mock
 import datetime
 import shutil
 import tempfile
+import shlex
 
 from libpyvinyl.Parameters.Collections import CalculatorParameters
 
@@ -340,6 +341,33 @@ class TestMcStas_instr(unittest.TestCase):
             instr.add_test("second_component")
 
         self.assertEqual(instr._test_list[0]["intensity"], 42.5)
+
+    def test_add_test_rejects_invalid_intensity(self):
+        """Tests that mctest-incompatible intensity values are rejected."""
+        instr = setup_populated_instr()
+        instr.set_parameters(theta=1.2)
+
+        for intensity in (True, False, float("inf"), float("nan")):
+            with self.subTest(intensity=intensity):
+                with self.assertRaises(ValueError):
+                    instr.add_test("second_component", intensity=intensity)
+
+    def test_add_test_shell_quotes_string_parameters(self):
+        """Tests that string parameter values survive mctest's shell."""
+        instr = setup_populated_instr()
+        instr.add_parameter("string", "label", value='a $HOME "quoted"')
+
+        instr.add_test("second_component", intensity=12.3,
+                       included_pars=["label"])
+
+        line = instr._format_test(instr._test_list[0])
+        self.assertEqual(
+            line,
+            "%Example: label='a $HOME \"quoted\"' Detector: "
+            "second_component_I=12.3")
+        self.assertEqual(
+            shlex.split(line.split(": ", 1)[1].split(" Detector:", 1)[0]),
+            ['label=a $HOME "quoted"'])
 
     def test_write_test_before_parameters_section(self):
         """Tests that %Example lines are written before %Parameters."""
