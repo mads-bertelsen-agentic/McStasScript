@@ -1600,21 +1600,17 @@ class TestAggregateNcount(unittest.TestCase):
         self.assertAlmostEqual(_aggregate_intensity(data, "ncount"), 6.0)
         self.assertAlmostEqual(_aggregate_intensity(data, "total"), 600.0)
 
-    def test_ncount_invalid_raises_in_view_with_analysis(self):
+    def test_ncount_accepted_by_view_with_analysis(self):
         """view_with_analysis accepts 'ncount' as valid aggregation."""
         from mcstasscript.geometry_viewer.api import view_with_analysis
         instr = MagicMock()
         instr.component_list = []
-        instr._simulation_parameters = {}
-        instr._declared_variables = {}
-        # Should NOT raise for 'ncount'
-        try:
+        with patch(
+            "mcstasscript.instrument_diagnostics.intensity_diagnostics.IntensityDiagnostics"
+        ) as mock_diag_cls, patch("mcstasscript.geometry_viewer.api.view") as mock_view:
+            mock_diag_cls.return_value.monitors = []
             view_with_analysis(instr, aggregation="ncount")
-        except ValueError as e:
-            self.fail(f"ncount should be a valid aggregation but raised: {e}")
-        except Exception:
-            # Expected to fail later (no real instrument), but not on validation
-            pass
+        mock_view.assert_called_once()
 
 class TestNcountPreservesExistingBehavior(unittest.TestCase):
     def test_existing_aggregations_still_work(self):

@@ -136,6 +136,9 @@ McStas_instr(name)  # Returns instrument object
 ├── get_component(name)          # Get component object by name
 ├── get_last_component()         # Get last added component
 ├── add_parameter(*args, **kwargs)  # Add instrument parameter
+├── add_test(monitor, ...)           # Add a McStas %Example test
+├── show_tests()                     # Show instrument tests
+├── remove_test(index)               # Remove an instrument test
 ├── add_declare_var(type, name, **kwargs)  # Add declared variable
 ├── add_user_var(type, name, **kwargs)     # Add user variable
 ├── append_declare(string)       # Append raw C code to declare section
