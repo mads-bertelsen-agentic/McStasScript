@@ -6,6 +6,8 @@ import unittest
 import unittest.mock
 import datetime
 import shutil
+import tempfile
+import shlex
 
 from libpyvinyl.Parameters.Collections import CalculatorParameters
 
@@ -299,6 +301,94 @@ class TestMcStas_instr(unittest.TestCase):
         my_instrument = setup_instr_root_path()
 
         self.assertEqual(my_instrument.name, "test_instrument")
+
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_add_show_and_remove_test(self, mock_stdout):
+        """Tests storing, displaying, and removing McStas %Example tests."""
+        instr = setup_populated_instr()
+        instr.set_parameters(theta=1.2)
+
+        instr.add_test("second_component", intensity=12.3)
+        instr.add_test("third_component", intensity=4,
+                       included_pars=["theta"])
+
+        instr.show_tests()
+        output = mock_stdout.getvalue().splitlines()
+        self.assertEqual(
+            output[0],
+            "0: %Example: theta=1.2 has_default=37 Detector: "
+            "second_component_I=12.3")
+        self.assertEqual(
+            output[1],
+            "1: %Example: theta=1.2 Detector: third_component_I=4")
+
+        instr.remove_test(0)
+        self.assertEqual(len(instr._test_list), 1)
+        self.assertEqual(instr._test_list[0]["monitor"], "third_component")
+        with self.assertRaises(IndexError):
+            instr.remove_test(1)
+
+    def test_add_test_uses_simulation_intensity(self):
+        """Tests deriving the expected intensity from a monitor result."""
+        instr = setup_populated_instr()
+        instr.set_parameters(theta=1.2)
+
+        monitor_data = unittest.mock.Mock()
+        monitor_data.name = "second_component"
+        monitor_data.metadata.total_I = 42.5
+        with unittest.mock.patch.object(instr, "backengine",
+                                        return_value=[monitor_data]):
+            instr.add_test("second_component")
+
+        self.assertEqual(instr._test_list[0]["intensity"], 42.5)
+
+    def test_add_test_rejects_invalid_intensity(self):
+        """Tests that mctest-incompatible intensity values are rejected."""
+        instr = setup_populated_instr()
+        instr.set_parameters(theta=1.2)
+
+        for intensity in (True, False, float("inf"), float("nan")):
+            with self.subTest(intensity=intensity):
+                with self.assertRaises(ValueError):
+                    instr.add_test("second_component", intensity=intensity)
+
+    def test_add_test_shell_quotes_string_parameters(self):
+        """Tests that string parameter values survive mctest's shell."""
+        instr = setup_populated_instr()
+        instr.add_parameter("string", "label", value='a $HOME "quoted"')
+
+        instr.add_test("second_component", intensity=12.3,
+                       included_pars=["label"])
+
+        line = instr._format_test(instr._test_list[0])
+        self.assertEqual(
+            line,
+            "%Example: label='a $HOME \"quoted\"' Detector: "
+            "second_component_I=12.3")
+        self.assertEqual(
+            shlex.split(line.split(": ", 1)[1].split(" Detector:", 1)[0]),
+            ['label=a $HOME "quoted"'])
+
+    def test_write_test_before_parameters_section(self):
+        """Tests that %Example lines are written before %Parameters."""
+        THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+        dummy_path = os.path.join(THIS_DIR, "dummy_mcstas")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            instr = McStas_instr("test_examples",
+                                 package_path=dummy_path,
+                                 input_path=temp_dir)
+            instr.add_parameter("double", "theta", value=1.2)
+            instr.add_component("monitor", "test_for_reading")
+            instr.add_test("monitor", intensity=10)
+            instr.write_full_instrument()
+
+            with open(os.path.join(temp_dir, "test_examples.instr"), "r") as fo:
+                instrument_text = fo.read()
+
+        example_index = instrument_text.index("* %Example:")
+        parameters_index = instrument_text.index("* %Parameters")
+        self.assertLess(example_index, parameters_index)
 
     def test_complex_initialize(self):
         """

@@ -8,6 +8,8 @@ import subprocess
 import copy
 import warnings
 import re
+import math
+import shlex
 
 from libpyvinyl.BaseCalculator import BaseCalculator
 from libpyvinyl.Parameters.Collections import CalculatorParameters
@@ -119,6 +121,15 @@ class McCode_instr(BaseCalculator):
     -------
     add_parameter(*args, **kwargs)
         Adds input parameter to the define section
+
+    add_test(Name_of_monitor, intensity=None, included_pars=None)
+        Adds a McStas %Example test to the instrument header
+
+    show_tests()
+        Prints the McStas %Example tests stored on the instrument
+
+    remove_test(index)
+        Removes a McStas %Example test by its show_tests index
 
     add_declare_var(type, name)
         Add declared variable called name of given type to the declare section
@@ -451,6 +462,9 @@ class McCode_instr(BaseCalculator):
             # Handle components
             self.component_list = []  # List of components (have to be ordered)
 
+            # McStas %Example tests written to the instrument header
+            self._test_list = []
+
             # Run subset settings
             self.run_from_ref = None
             self.run_to_ref = None
@@ -753,6 +767,110 @@ class McCode_instr(BaseCalculator):
 
     def get_parameter_names(self):
         return [parameter.name for parameter in self.parameters.parameters.values()]
+
+    def add_test(self, Name_of_monitor, intensity=None, included_pars=None):
+        """
+        Add a McStas ``%Example`` test to the instrument header.
+
+        Parameters
+        ----------
+        Name_of_monitor : str
+            Name of the monitor component used by the test.
+
+        intensity : float, optional
+            Expected total intensity. If omitted, the current instrument is
+            run and the monitor's total intensity is used.
+
+        included_pars : iterable of str, optional
+            Parameter names to include in the ``%Example`` line. By default,
+            all instrument parameters are included.
+        """
+        self.get_component(Name_of_monitor)
+
+        if included_pars is None:
+            included_pars = self.get_parameter_names()
+        else:
+            included_pars = list(included_pars)
+
+        unknown = set(included_pars) - set(self.get_parameter_names())
+        if unknown:
+            raise KeyError(f"Unknown parameters: {sorted(unknown)}")
+
+        test_parameters = []
+        for name in included_pars:
+            value = self.parameters[name].value
+            if value is None:
+                raise RuntimeError("Parameter value not set for parameter: '"
+                                   + name + "'. Set it before adding a test.")
+            test_parameters.append((name, value))
+
+        if intensity is None:
+            simulation_data = self.backengine()
+            monitor_data = None
+            for data in simulation_data or []:
+                if data.name == Name_of_monitor:
+                    monitor_data = data
+                    break
+
+            if monitor_data is None:
+                raise ValueError("No simulation data found for monitor '"
+                                 + str(Name_of_monitor) + "'.")
+
+            intensity = monitor_data.metadata.total_I
+            if intensity is None:
+                try:
+                    intensity = monitor_data.Intensity.sum()
+                except AttributeError:
+                    raise ValueError("Could not determine total intensity for "
+                                     + "monitor '" + str(Name_of_monitor) + "'.")
+
+        try:
+            intensity_value = float(intensity)
+            if isinstance(intensity, bool) or not math.isfinite(intensity_value):
+                raise ValueError
+        except (TypeError, ValueError):
+            raise ValueError("intensity must be a finite number.")
+
+        if not hasattr(self, "_test_list"):
+            self._test_list = []
+        self._test_list.append({"monitor": Name_of_monitor,
+                                "intensity": intensity,
+                                "parameters": test_parameters})
+
+    @staticmethod
+    def _format_example_value(value):
+        if isinstance(value, str):
+            # mctest inserts parameter values into a shell command.
+            return shlex.quote(value)
+        return str(value)
+
+    def _format_test(self, test):
+        parameters = " ".join(
+            name + "=" + self._format_example_value(value)
+            for name, value in test["parameters"])
+        if parameters:
+            parameters += " "
+        return ("%Example: " + parameters + "Detector: "
+                + str(test["monitor"]) + "_I=" + str(test["intensity"]))
+
+    def show_tests(self):
+        """Print stored McStas ``%Example`` tests and their indices."""
+        tests = getattr(self, "_test_list", [])
+        if len(tests) == 0:
+            print("No instrument tests available")
+            return
+
+        for index, test in enumerate(tests):
+            print(str(index) + ": " + self._format_test(test))
+
+    def remove_test(self, index):
+        """Remove the test at the zero-based index shown by ``show_tests``."""
+        tests = getattr(self, "_test_list", [])
+        try:
+            del tests[index]
+        except (IndexError, TypeError):
+            raise IndexError("No instrument test exists at index "
+                             + str(index) + ".")
 
     def show_parameters(self, line_length=None):
         """
@@ -2105,6 +2223,8 @@ class McCode_instr(BaseCalculator):
         fo.write("* Please write a longer instrument description here!\n")
         fo.write("* \n")
         fo.write("* \n")
+        for test in getattr(self, "_test_list", []):
+            fo.write("* " + self._format_test(test) + "\n")
         fo.write("* %Parameters\n")
         # Insert parameter names and template for filling in mcdoc table
         for param in list(self.parameters):
