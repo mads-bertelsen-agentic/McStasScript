@@ -14,7 +14,7 @@ class TestAddTest(unittest.TestCase):
             self.skipTest("mctest is not available")
 
         instrument_name = "integration_test_add_test"
-        expected_intensity = 6.283185307179586e8
+        expected_intensity = 6.283e8
 
         with tempfile.TemporaryDirectory() as instrument_dir, \
                 tempfile.TemporaryDirectory() as test_output:
@@ -47,7 +47,7 @@ class TestAddTest(unittest.TestCase):
                 ["mctest", "--local", instrument_dir,
                  "--testdir", test_output,
                  "--instr", instrument_name,
-                 "--ncount", "10000", "--skipnontest"],
+                 "--ncount", "100000", "--skipnontest"],
                 cwd=instrument_dir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
