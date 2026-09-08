@@ -1,3 +1,5 @@
+import re
+
 from mcstasscript.helper.formatting import bcolors
 from mcstasscript.helper.formatting import is_legal_parameter
 from mcstasscript.helper.exceptions import McStasError
@@ -371,9 +373,10 @@ class DeclareVariable:
 
 
 def _quote_if_needed(s):
-    if not all(c.isalnum() or c == "_" for c in s):
-        return f'"{s}"'
-    return s
+    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", s):
+        return s
+    escaped = s.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'
 
 
 class MetadataBlock:
@@ -1070,7 +1073,20 @@ class Component:
             Free-form type string (e.g. ``"JSON"``, ``"txt"``).
         value : str
             The metadata body text.
+
+        Raises
+        ------
+        ValueError
+            If ``name`` is empty or whitespace-only, or if a METADATA
+            block with the same ``name`` already exists on this component.
         """
+        if not name or not name.strip():
+            raise ValueError("METADATA name must not be empty")
+        for block in self.metadata_list:
+            if block.name == name:
+                raise ValueError(
+                    f"A METADATA block named {name!r} already exists on "
+                    f"component {self.name!r}")
         cls = self.__class__
         major = getattr(cls, "mccode_version", None)
         minor = getattr(cls, "mccode_minor_version", None)

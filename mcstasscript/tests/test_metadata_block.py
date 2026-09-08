@@ -54,6 +54,21 @@ class TestComponentMetadata(unittest.TestCase):
         self.assertEqual(self.comp.metadata_list[0].name, "a")
         self.assertEqual(self.comp.metadata_list[1].name, "b")
 
+    def test_add_METADATA_empty_name_raises(self):
+        with self.assertRaises(ValueError):
+            self.comp.add_METADATA("", "txt", "data")
+
+    def test_add_METADATA_whitespace_name_raises(self):
+        with self.assertRaises(ValueError):
+            self.comp.add_METADATA("   ", "txt", "data")
+
+    def test_add_METADATA_duplicate_name_raises(self):
+        self.comp.add_METADATA("a", "JSON", '{"x": 1}')
+        with self.assertRaises(ValueError):
+            self.comp.add_METADATA("a", "txt", "other")
+        self.assertEqual(len(self.comp.metadata_list), 1)
+        self.assertEqual(self.comp.metadata_list[0].name, "a")
+
     def test_get_METADATA_found(self):
         self.comp.add_METADATA("stored", "txt", "some text")
         block = self.comp.get_METADATA("stored")
@@ -104,8 +119,23 @@ class TestQuoteIfNeeded(unittest.TestCase):
     def test_slash_quoted(self):
         self.assertEqual(_quote_if_needed("mimetype/text"), '"mimetype/text"')
 
-    def test_empty_string_unquoted(self):
-        self.assertEqual(_quote_if_needed(""), "")
+    def test_empty_string_quoted(self):
+        self.assertEqual(_quote_if_needed(""), '""')
+
+    def test_numeric_string_quoted(self):
+        self.assertEqual(_quote_if_needed("123"), '"123"')
+
+    def test_hyphenated_quoted(self):
+        self.assertEqual(_quote_if_needed("my-data"), '"my-data"')
+
+    def test_mime_style_quoted(self):
+        self.assertEqual(_quote_if_needed("text/plain"), '"text/plain"')
+
+    def test_identifier_with_underscore_and_digits_unquoted(self):
+        self.assertEqual(_quote_if_needed("my_type2"), "my_type2")
+
+    def test_value_with_quote_and_backslash_escaped(self):
+        self.assertEqual(_quote_if_needed('a"b\\c'), '"a\\"b\\\\c"')
 
 
 class TestWriteComponentMetadata(unittest.TestCase):
@@ -162,6 +192,18 @@ class TestWriteComponentMetadata(unittest.TestCase):
         comp.add_METADATA("my-data", "txt", "data")
         output = self._write(comp)
         self.assertIn('METADATA txt "my-data" %{', output)
+
+    def test_numeric_name_quoted(self):
+        comp = self._make_comp()
+        comp.add_METADATA("123", "txt", "data")
+        output = self._write(comp)
+        self.assertIn('METADATA txt "123" %{\n', output)
+
+    def test_name_requiring_escaping(self):
+        comp = self._make_comp()
+        comp.add_METADATA('my"name', "txt", "data")
+        output = self._write(comp)
+        self.assertIn('METADATA txt "my\\"name" %{\n', output)
 
     def test_metadata_after_jump(self):
         comp = self._make_comp()

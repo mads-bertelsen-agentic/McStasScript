@@ -1586,6 +1586,7 @@ class McCode_instr(BaseCalculator):
         new_component.c_code_before = ""
         new_component.c_code_after = ""
         new_component.search_statement_list = SearchStatementList()
+        new_component.metadata_list = []
 
         self._insert_component(new_component, before=before, after=after)
 

@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 
 def _parse_version(output):
@@ -6,9 +7,14 @@ def _parse_version(output):
     output = output.split(" (", 1)[0]
     output = output.split("version", 1)[1].strip()
     parts = output.split(".")
-    major = int(parts[0])
-    minor = int(parts[1]) if len(parts) > 1 else 0
-    patch = int(parts[2]) if len(parts) > 2 else 0
+
+    def _int_prefix(part):
+        match = re.match(r"\d+", part)
+        return int(match.group()) if match else 0
+
+    major = _int_prefix(parts[0])
+    minor = _int_prefix(parts[1]) if len(parts) > 1 else 0
+    patch = _int_prefix(parts[2]) if len(parts) > 2 else 0
     return major, minor, patch
 
 def check_mcstas_major_version(mcstas_bin_path):
