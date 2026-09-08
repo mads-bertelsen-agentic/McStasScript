@@ -370,6 +370,42 @@ class DeclareVariable:
         return string
 
 
+def _quote_if_needed(s):
+    if not all(c.isalnum() or c == "_" for c in s):
+        return f'"{s}"'
+    return s
+
+
+class MetadataBlock:
+    """
+    A single METADATA block attached to a component instance.
+
+    Mirrors the McStas METADATA keyword which allows attaching arbitrary
+    named text (JSON, Python, plain text, etc.) to a component.
+
+    Attributes
+    ----------
+    name : str
+        Name of the metadata entry.
+    type : str
+        Free-form type string (e.g. ``"JSON"``, ``"txt"``).
+    value : str
+        The metadata body text.
+    """
+
+    def __init__(self, name, type, value):
+        self.name = name
+        self.type = type
+        self.value = value
+
+    def __repr__(self):
+        return (f"MetadataBlock(name={self.name!r}, type={self.type!r}, "
+                f"value={self.value!r})")
+
+    def __str__(self):
+        return f"METADATA {self.type} {self.name}"
+
+
 class Component:
     """
     A class describing a McStas component to be written to an instrument
@@ -598,6 +634,9 @@ class Component:
         # references to component names
         self.AT_reference = None
         self.ROTATED_reference = None
+
+        # METADATA blocks
+        self.metadata_list = []
 
         # If any keywords are set in kwargs, update these
         self.set_keyword_input(AT=AT, AT_RELATIVE=AT_RELATIVE, ROTATED=ROTATED,
@@ -1006,6 +1045,94 @@ class Component:
 
         print(self.search_statement_list)
 
+    def add_METADATA(self, name, type, value):
+        """
+        Add a METADATA block to this component.
+
+        METADATA blocks can be used to attach arbitrary text (JSON,
+        Python code, plain text, etc.) to a component. A common use
+        case is with the ``File`` component, which writes a METADATA
+        block's content to a file at simulation start.
+
+        Example
+        -------
+        >>> origin.add_METADATA("stored", "txt", "Hello from McStasScript")
+        >>> writer = instr.add_component("writer", "File")
+        >>> writer.filename = '"output.txt"'
+        >>> writer.metadatakey = '"Origin:stored"'
+        >>> writer.keep = 1
+
+        Parameters
+        ----------
+        name : str
+            Name of the metadata entry.
+        type : str
+            Free-form type string (e.g. ``"JSON"``, ``"txt"``).
+        value : str
+            The metadata body text.
+        """
+        cls = self.__class__
+        major = getattr(cls, "mccode_version", None)
+        minor = getattr(cls, "mccode_minor_version", None)
+        if (isinstance(major, int) and isinstance(minor, int)
+                and (major, minor) < (3, 4)):
+            import warnings
+            warnings.warn(
+                f"METADATA requires McStas >= 3.4, but installed "
+                f"version is {major}.{minor}. The METADATA block "
+                f"will be written to the .instr file but McStas "
+                f"will not be able to parse it.",
+                stacklevel=2)
+        self.metadata_list.append(MetadataBlock(name, type, value))
+
+    def get_METADATA(self, name):
+        """
+        Get a METADATA block by name.
+
+        Parameters
+        ----------
+        name : str
+            Name of the metadata entry.
+
+        Returns
+        -------
+        MetadataBlock or None
+        """
+        for block in self.metadata_list:
+            if block.name == name:
+                return block
+        return None
+
+    def list_METADATA(self):
+        """
+        Return all METADATA blocks on this component.
+
+        Returns
+        -------
+        list of MetadataBlock
+        """
+        return list(self.metadata_list)
+
+    def remove_METADATA(self, name):
+        """
+        Remove a METADATA block by name.
+
+        Parameters
+        ----------
+        name : str
+            Name of the metadata entry.
+
+        Raises
+        ------
+        KeyError
+            If no metadata block with the given name exists.
+        """
+        for i, block in enumerate(self.metadata_list):
+            if block.name == name:
+                del self.metadata_list[i]
+                return
+        raise KeyError(f"No METADATA named {name!r} on component {self.name!r}")
+
     def write_component(self, fo, instrument_search=None):
         """
         Method that writes component to file
@@ -1101,6 +1228,14 @@ class Component:
 
         if not self.JUMP == "":
             fo.write(f"JUMP {self.JUMP}\n")
+
+        # Write METADATA blocks
+        for block in self.metadata_list:
+            type_str = _quote_if_needed(block.type)
+            name_str = _quote_if_needed(block.name)
+            fo.write(f"METADATA {type_str} {name_str} %{{\n")
+            fo.write(block.value + "\n")
+            fo.write("%}\n")
 
         if len(self.c_code_after) > 0:
             fo.write(f"\n{self.c_code_after} // From component named {self.name}\n")
