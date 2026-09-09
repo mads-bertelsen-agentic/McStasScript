@@ -1,4 +1,4 @@
-﻿mcstasscript.interface.instr.McStas\_instr
+mcstasscript.interface.instr.McStas\_instr
 ==========================================
 
 .. currentmodule:: mcstasscript.interface.instr
@@ -6,14 +6,12 @@
 .. autoclass:: McStas_instr
    :members:
 
-   
    .. automethod:: __init__
 
-   
    .. rubric:: Methods
 
    .. autosummary::
-   
+
       ~McStas_instr.__init__
       ~McStas_instr.add_component
       ~McStas_instr.add_declare_var
@@ -31,9 +29,13 @@
       ~McStas_instr.copy_component
       ~McStas_instr.dump
       ~McStas_instr.get_component
+      ~McStas_instr.get_METADATA
       ~McStas_instr.get_interface_data
       ~McStas_instr.get_last_component
       ~McStas_instr.interface
+      ~McStas_instr.list_METADATA
+      ~McStas_instr.metadata_data
+      ~McStas_instr.metadata_type
       ~McStas_instr.print_component
       ~McStas_instr.print_component_short
       ~McStas_instr.print_components
@@ -61,16 +63,10 @@
       ~McStas_instr.show_variables
       ~McStas_instr.write_c_files
       ~McStas_instr.write_full_instrument
-   
-   
 
-   
-   
    .. rubric:: Attributes
 
    .. autosummary::
-   
+
       ~McStas_instr.data
       ~McStas_instr.parameters
-   
-   
