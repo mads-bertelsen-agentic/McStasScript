@@ -160,6 +160,12 @@ class TestWriteComponentMetadata(unittest.TestCase):
         output = self._write(comp)
         self.assertNotIn("METADATA", output)
 
+    def test_legacy_component_without_metadata_list(self):
+        comp = self._make_comp()
+        del comp.metadata_list
+        output = self._write(comp)
+        self.assertNotIn("METADATA", output)
+
     def test_single_metadata_block(self):
         comp = self._make_comp()
         comp.add_METADATA("stored", "txt", "some text")

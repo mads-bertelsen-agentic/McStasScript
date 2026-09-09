@@ -1246,7 +1246,7 @@ class Component:
             fo.write(f"JUMP {self.JUMP}\n")
 
         # Write METADATA blocks
-        for block in self.metadata_list:
+        for block in getattr(self, "metadata_list", []):
             type_str = _quote_if_needed(block.type)
             name_str = _quote_if_needed(block.name)
             fo.write(f"METADATA {type_str} {name_str} %{{\n")
