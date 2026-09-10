@@ -30,14 +30,11 @@ class TestInstrMetadataAPI(unittest.TestCase):
 
     def test_list_METADATA(self):
         result = self.instr.list_METADATA()
-        self.assertIn("Origin", result)
-        self.assertIn("Sample", result)
-        self.assertEqual(result["Origin"], ["stored", "info"])
-        self.assertEqual(result["Sample"], ["note"])
+        self.assertEqual(result, ["Origin:stored", "Origin:info", "Sample:note"])
 
     def test_list_METADATA_empty(self):
         instr = _make_instr()
-        self.assertEqual(instr.list_METADATA(), {})
+        self.assertEqual(instr.list_METADATA(), [])
 
     def test_get_METADATA_names_only(self):
         names = self.instr.get_METADATA("Origin")

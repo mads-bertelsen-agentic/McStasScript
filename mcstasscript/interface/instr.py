@@ -1735,17 +1735,17 @@ class McCode_instr(BaseCalculator):
 
     def list_METADATA(self):
         """
-        List all components that have METADATA blocks.
+        List all METADATA keys defined on the instrument.
 
         Returns
         -------
-        dict
-            Mapping of component name to list of metadata block names.
+        list of str
+            Fully qualified keys in ``ComponentName:metadataName`` form.
         """
-        result = {}
+        result = []
         for comp in self.component_list:
-            if comp.metadata_list:
-                result[comp.name] = [b.name for b in comp.metadata_list]
+            for block in getattr(comp, "metadata_list", []):
+                result.append(f"{comp.name}:{block.name}")
         return result
 
     def get_METADATA(self, component_name, metadata_name=None):

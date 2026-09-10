@@ -1396,6 +1396,11 @@ class Component:
             string += self.EXTEND + "%}" + "\n"
         if not self.JUMP == "":
             string += "JUMP " + self.JUMP + "\n"
+        for block in getattr(self, "metadata_list", []):
+            type_str = _quote_if_needed(block.type)
+            name_str = _quote_if_needed(block.name)
+            string += f"METADATA {type_str} {name_str} %{{\n"
+            string += block.value + "\n%}\n"
         if len(self.c_code_after) > 1:
             string += self.c_code_after + "\n"
 
