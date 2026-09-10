@@ -79,18 +79,6 @@ class TestComponentMetadata(unittest.TestCase):
     def test_get_METADATA_not_found(self):
         self.assertIsNone(self.comp.get_METADATA("nonexistent"))
 
-    def test_list_METADATA(self):
-        self.comp.add_METADATA("a", "JSON", "{}")
-        self.comp.add_METADATA("b", "txt", "hi")
-        blocks = self.comp.list_METADATA()
-        self.assertEqual(len(blocks), 2)
-        self.assertIsInstance(blocks, list)
-        names = [b.name for b in blocks]
-        self.assertEqual(names, ["a", "b"])
-
-    def test_list_METADATA_empty(self):
-        self.assertEqual(self.comp.list_METADATA(), [])
-
     def test_remove_METADATA(self):
         self.comp.add_METADATA("a", "JSON", "{}")
         self.comp.add_METADATA("b", "txt", "hi")

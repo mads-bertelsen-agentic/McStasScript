@@ -1119,16 +1119,6 @@ class Component:
                 return block
         return None
 
-    def list_METADATA(self):
-        """
-        Return all METADATA blocks on this component.
-
-        Returns
-        -------
-        list of MetadataBlock
-        """
-        return list(self.metadata_list)
-
     def remove_METADATA(self, name):
         """
         Remove a METADATA block by name.

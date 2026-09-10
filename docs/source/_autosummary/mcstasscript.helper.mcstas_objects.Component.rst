@@ -16,7 +16,6 @@ mcstasscript.helper.mcstas\_objects.Component
       ~Component.add_METADATA
       ~Component.append_EXTEND
       ~Component.get_METADATA
-      ~Component.list_METADATA
       ~Component.print_long
       ~Component.print_long_deprecated
       ~Component.print_short
