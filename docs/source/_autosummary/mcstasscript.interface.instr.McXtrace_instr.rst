@@ -42,6 +42,7 @@ mcstasscript.interface.instr.McXtrace\_instr
       ~McXtrace_instr.run_from_cli
       ~McXtrace_instr.run_full_instrument
       ~McXtrace_instr.saveH5
+      ~McXtrace_instr.show_METADATA
       ~McXtrace_instr.set_component_AT
       ~McXtrace_instr.set_component_GROUP
       ~McXtrace_instr.set_component_JUMP

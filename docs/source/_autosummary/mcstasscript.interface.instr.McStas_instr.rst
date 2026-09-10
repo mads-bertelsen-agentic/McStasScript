@@ -42,6 +42,7 @@ mcstasscript.interface.instr.McStas\_instr
       ~McStas_instr.run_from_cli
       ~McStas_instr.run_full_instrument
       ~McStas_instr.saveH5
+      ~McStas_instr.show_METADATA
       ~McStas_instr.set_component_AT
       ~McStas_instr.set_component_GROUP
       ~McStas_instr.set_component_JUMP

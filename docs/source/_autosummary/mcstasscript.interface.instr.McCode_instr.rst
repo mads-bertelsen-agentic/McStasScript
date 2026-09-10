@@ -42,6 +42,7 @@ mcstasscript.interface.instr.McCode\_instr
       ~McCode_instr.run_from_cli
       ~McCode_instr.run_full_instrument
       ~McCode_instr.saveH5
+      ~McCode_instr.show_METADATA
       ~McCode_instr.set_component_AT
       ~McCode_instr.set_component_GROUP
       ~McCode_instr.set_component_JUMP

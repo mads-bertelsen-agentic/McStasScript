@@ -1,8 +1,9 @@
+import io
 import os
 import unittest
+import unittest.mock
 
 from mcstasscript.interface.instr import McStas_instr
-from mcstasscript.helper.mcstas_objects import MetadataBlock
 from mcstasscript.tests.helpers_for_tests import WorkInTestDir
 
 
@@ -30,26 +31,48 @@ class TestInstrMetadataAPI(unittest.TestCase):
 
     def test_list_METADATA(self):
         result = self.instr.list_METADATA()
-        self.assertEqual(result, ["Origin:stored", "Origin:info", "Sample:note"])
+        self.assertEqual(result, {
+            "Origin": ["stored", "info"],
+            "Sample": ["note"],
+        })
 
     def test_list_METADATA_empty(self):
         instr = _make_instr()
-        self.assertEqual(instr.list_METADATA(), [])
+        self.assertEqual(instr.list_METADATA(), {})
 
-    def test_get_METADATA_names_only(self):
-        names = self.instr.get_METADATA("Origin")
-        self.assertEqual(names, ["stored", "info"])
+    def test_get_METADATA_all(self):
+        result = self.instr.get_METADATA()
+        self.assertEqual(result, {
+            "Origin": {
+                "stored": {"type": "txt", "value": "some text"},
+                "info": {"type": "JSON", "value": '{"a": 1}'},
+            },
+            "Sample": {
+                "note": {"type": "txt", "value": "hello"},
+            },
+        })
+
+    def test_get_METADATA_component(self):
+        result = self.instr.get_METADATA("Origin")
+        self.assertEqual(result, {
+            "Origin": {
+                "stored": {"type": "txt", "value": "some text"},
+                "info": {"type": "JSON", "value": '{"a": 1}'},
+            },
+        })
 
     def test_get_METADATA_specific_block(self):
-        block = self.instr.get_METADATA("Origin", "stored")
-        self.assertIsInstance(block, MetadataBlock)
-        self.assertEqual(block.type, "txt")
-        self.assertEqual(block.value, "some text")
+        result = self.instr.get_METADATA("Origin", "stored")
+        self.assertEqual(result, {
+            "Origin": {
+                "stored": {"type": "txt", "value": "some text"},
+            },
+        })
 
     def test_get_METADATA_specific_block_json(self):
-        block = self.instr.get_METADATA("Origin", "info")
-        self.assertEqual(block.type, "JSON")
-        self.assertEqual(block.value, '{"a": 1}')
+        result = self.instr.get_METADATA("Origin", "info")
+        self.assertEqual(result["Origin"]["info"]["type"], "JSON")
+        self.assertEqual(result["Origin"]["info"]["value"], '{"a": 1}')
 
     def test_get_METADATA_component_not_found(self):
         with self.assertRaises(NameError):
@@ -58,6 +81,26 @@ class TestInstrMetadataAPI(unittest.TestCase):
     def test_get_METADATA_name_not_found(self):
         with self.assertRaises(KeyError):
             self.instr.get_METADATA("Origin", "nonexistent")
+
+    def test_get_METADATA_name_without_component(self):
+        with self.assertRaises(ValueError):
+            self.instr.get_METADATA(metadata_name="stored")
+
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
+    def test_show_METADATA(self, mock_stdout):
+        self.instr.show_METADATA()
+        output = mock_stdout.getvalue()
+        self.assertIn("Origin:", output)
+        self.assertIn("  stored (txt):", output)
+        self.assertIn("    some text", output)
+        self.assertIn("  info (JSON):", output)
+        self.assertIn("Sample:", output)
+
+    def test_show_METADATA_empty(self):
+        instr = _make_instr()
+        with unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as output:
+            instr.show_METADATA()
+        self.assertEqual(output.getvalue(), "No METADATA blocks defined.\n")
 
     def test_metadata_type(self):
         self.assertEqual(self.instr.metadata_type("Origin", "stored"), "txt")
