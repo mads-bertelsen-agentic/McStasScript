@@ -33,7 +33,6 @@ mcstasscript.interface.instr.McXtrace\_instr
       ~McXtrace_instr.get_interface_data
       ~McXtrace_instr.get_last_component
       ~McXtrace_instr.interface
-      ~McXtrace_instr.list_METADATA
       ~McXtrace_instr.metadata_data
       ~McXtrace_instr.metadata_type
       ~McXtrace_instr.print_component

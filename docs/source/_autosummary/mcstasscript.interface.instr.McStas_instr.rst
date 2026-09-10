@@ -33,7 +33,6 @@ mcstasscript.interface.instr.McStas\_instr
       ~McStas_instr.get_interface_data
       ~McStas_instr.get_last_component
       ~McStas_instr.interface
-      ~McStas_instr.list_METADATA
       ~McStas_instr.metadata_data
       ~McStas_instr.metadata_type
       ~McStas_instr.print_component

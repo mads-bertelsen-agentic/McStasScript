@@ -1733,22 +1733,6 @@ class McCode_instr(BaseCalculator):
 
         return self.component_list[-1]
 
-    def list_METADATA(self):
-        """
-        List all components that have METADATA blocks.
-
-        Returns
-        -------
-        dict
-            Mapping of component name to list of metadata block names.
-        """
-        result = {}
-        for comp in self.component_list:
-            blocks = getattr(comp, "metadata_list", [])
-            if blocks:
-                result[comp.name] = [block.name for block in blocks]
-        return result
-
     def show_METADATA(self):
         """Print all METADATA blocks in a readable format."""
         metadata = self.get_METADATA()

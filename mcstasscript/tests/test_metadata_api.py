@@ -29,17 +29,6 @@ class TestInstrMetadataAPI(unittest.TestCase):
         sample = self.instr.get_component("Sample")
         sample.add_METADATA("note", "txt", "hello")
 
-    def test_list_METADATA(self):
-        result = self.instr.list_METADATA()
-        self.assertEqual(result, {
-            "Origin": ["stored", "info"],
-            "Sample": ["note"],
-        })
-
-    def test_list_METADATA_empty(self):
-        instr = _make_instr()
-        self.assertEqual(instr.list_METADATA(), {})
-
     def test_get_METADATA_all(self):
         result = self.instr.get_METADATA()
         self.assertEqual(result, {
