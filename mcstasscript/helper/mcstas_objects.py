@@ -1059,7 +1059,7 @@ class Component:
 
         Example
         -------
-        >>> origin.add_METADATA("stored", "txt", "Hello from McStasScript")
+        >>> origin.add_METADATA("stored", "text/plain", "Hello from McStasScript")
         >>> writer = instr.add_component("writer", "File")
         >>> writer.filename = '"output.txt"'
         >>> writer.metadatakey = '"Origin:stored"'
@@ -1070,7 +1070,7 @@ class Component:
         name : str
             Name of the metadata entry.
         type : str
-            Free-form type string (e.g. ``"JSON"``, ``"txt"``).
+            Free-form type string (e.g. ``"application/json"``, ``"text/plain"``), ideally a valid MIME type.
         value : str
             The metadata body text.
 
