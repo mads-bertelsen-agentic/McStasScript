@@ -1,0 +1,27 @@
+begin instrument:
+  Creator: mcstas 3.7.14
+  Source: tiny_scan.instr
+  Parameters:  theta, wavelength
+  Trace_enabled: no
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation
+Date: Wed Oct 28 13 51 2026
+Ncount: 64
+Numpoints: 6
+Param: theta = -1, theta = 1, theta = -1, theta = 1, theta = -1, theta = 1, wavelength = 2, wavelength = 2, wavelength = 4, wavelength = 4, wavelength = 6, wavelength = 6
+end simulation
+
+begin data
+type: multiarray_1d(6)
+title: Scan of theta, wavelength
+xvars: theta, wavelength
+yvars: (spectrum_I,spectrum_ERR
+xlabel: 'theta, wavelength'
+ylabel: 'Intensity'
+xlimits: -1 1
+filename: mccode.dat
+variables: theta wavelengthspectrum_I spectrum_ERR
+end data

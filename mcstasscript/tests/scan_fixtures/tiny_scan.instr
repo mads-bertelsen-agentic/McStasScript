@@ -1,0 +1,36 @@
+/*******************************************************************************
+* Small native scan fixture. Build and run only through capture.py in a temp dir.
+*******************************************************************************/
+DEFINE INSTRUMENT tiny_scan(double theta=0, double wavelength=3,
+                           string category="vanadium", int fail=0)
+
+DECLARE
+%{
+  double source_flux;
+%}
+
+INITIALIZE
+%{
+  if (fail) {
+    fprintf(stderr, "SCAN_FIXTURE_INTENTIONAL_FAILURE: fail requested\n");
+    exit(23);
+  }
+  source_flux = (theta+2)*(strcmp(category, "nickel") == 0 ? 2 : 1);
+%}
+
+TRACE
+COMPONENT origin = Progress_bar()
+AT (0, 0, 0) ABSOLUTE
+
+COMPONENT source = Source_simple(
+  radius=0.001, dist=1, focus_xw=0.01, focus_yh=0.01,
+  lambda0=wavelength, dlambda=0.1,
+  flux=source_flux)
+AT (0, 0, 0) RELATIVE origin
+
+COMPONENT spectrum = L_monitor(
+  xwidth=0.02, yheight=0.02, nL=4, Lmin=1, Lmax=7,
+  filename="spectrum.dat")
+AT (0, 0, 1) RELATIVE origin
+
+END

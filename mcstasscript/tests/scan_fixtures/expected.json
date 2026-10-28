@@ -1,0 +1,1972 @@
+{
+  "schema_version": 1,
+  "purpose": "Native fixtures only; no McStasScript execution API is used.",
+  "seed": 314159,
+  "ncount_per_point": 64,
+  "versions": {
+    "mcrun": "3.7.14",
+    "mcstas": "mcstas code generator version 3.7.14 (git)\nCopyright (C) DTU Physics and Risoe National Laboratory, 1997-2026\nAdditions (C) Institut Laue Langevin, 2003-2019\nAll rights reserved\n\nComponents are (C) their authors, see component headers.",
+    "python": "3.14.6 | packaged by conda-forge | (main, Jun 12 2026, 08:47:56) [Clang 20.1.8 ]",
+    "h5py": "3.16.0",
+    "hdf5": "1.14.6",
+    "numpy": "2.5.1"
+  },
+  "build_directory": "/var/folders/1t/8gxgl7l51dd3pk_tbw0mvtj80000gn/T/opencode/scan-fixtures-n63fbjtf",
+  "cases": [
+    {
+      "name": "ascii_1d",
+      "options": [
+        "-N",
+        "3",
+        "theta=-1,1"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": false,
+      "scanned_parameters": [
+        "theta"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=McCode",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=ascii_1d",
+        "tiny_scan.instr",
+        "-N",
+        "3",
+        "theta=-1,1"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "1",
+            "parameters": {
+              "theta": "0",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "2",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [
+          "-1 6.28296e-07 7.8537e-08",
+          "0 1.25659e-06 1.57074e-07",
+          "1 1.88489e-06 2.35611e-07"
+        ],
+        "summary_variables": "theta spectrum_I spectrum_ERR",
+        "summary_bytes": 435,
+        "has_root_sim": true,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "0/mccode.sim": "0670e3b720cd63e31ac5bfc041d331b9f229b6801bce6d91b5195223c0805b0e",
+        "0/spectrum.dat": "073d3ba221a1fe96505adb533d78d7e5d5d3c0606dcd5b7b85514ca536b13884",
+        "1/mccode.sim": "f7ca7faa9b4ab8b7c197cf9c6708e6f04142ee4a5b29b44dd6804d08cdef5219",
+        "1/spectrum.dat": "4b351016b43541b2639507eb2db00d52be46828bdad061b20ec4ba3c7278f596",
+        "2/mccode.sim": "3ee3226e1098ab3d9fc544347c79009bfe5bd275000c848040fae5f6676b63c5",
+        "2/spectrum.dat": "aefbbb916e644dc4850937244d7df1b4951ec0694d64bff907f04d844ad91530",
+        "mccode.dat": "17157acdcab27162c8625f68482b371e24fab4f6c643c7d389318148e889d67f",
+        "mccode.sim": "94aeb7451aa6bcb41c079313cc916e2d96be57b8bf0139046160a2131c1a150e"
+      },
+      "artifact_bytes": 6738
+    },
+    {
+      "name": "ascii_cartesian_2x3",
+      "options": [
+        "-L",
+        "theta=-1,1,-1,1,-1,1",
+        "wavelength=2,2,4,4,6,6"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": false,
+      "scanned_parameters": [
+        "theta",
+        "wavelength"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 2,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 2,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 4,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 3,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 4,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 4,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 6,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 5,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 6,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=McCode",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=ascii_cartesian_2x3",
+        "tiny_scan.instr",
+        "-L",
+        "theta=-1,1,-1,1,-1,1",
+        "wavelength=2,2,4,4,6,6"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "2",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "1",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "2",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "2",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "4",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 3,
+            "path": "3",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "4",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 4,
+            "path": "4",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "6",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 5,
+            "path": "5",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "6",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [
+          "-1.0 2.0 6.28296e-07 7.8537e-08",
+          "1.0 2.0 1.88489e-06 2.35611e-07",
+          "-1.0 4.0 6.28296e-07 7.8537e-08",
+          "1.0 4.0 1.88489e-06 2.35611e-07",
+          "-1.0 6.0 6.28296e-07 7.8537e-08",
+          "1.0 6.0 1.88489e-06 2.35611e-07"
+        ],
+        "summary_variables": "wavelength theta spectrum_I spectrum_ERR",
+        "summary_bytes": 633,
+        "has_root_sim": true,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "0/mccode.sim": "a40831cbd3e57a09baad580cefe5119fc18900e2a476688c6bd162dd1ec43545",
+        "0/spectrum.dat": "66eace16c868871fbbe1a7a45a76904eac426eed487e3ad29bc716c2d2c6b96c",
+        "1/mccode.sim": "5a8c3bbc151d7ba7376ed85966109f97616473e38274c7e15ada9e072a092772",
+        "1/spectrum.dat": "4968a10e2f5df662169f36ccfe3c019264497570be7005425c431f85b449674d",
+        "2/mccode.sim": "e8cc1b16b26008eca407c2f32d5fd042e2e927a84de1a0f7db29febe7f60a492",
+        "2/spectrum.dat": "2328d5cd7ed17a2bb407cd843d249f3ff582601bb05adfc6136302f163c3b8dc",
+        "3/mccode.sim": "994b75557386569c29aa78392ec2cd25fbbb10f2aa11844f02ac12b13ca09dcb",
+        "3/spectrum.dat": "37d1febf730de4579c5ce61c91e5d4a5d9506931e3901056ad645ac3430a5827",
+        "4/mccode.sim": "7ac46baf2934c1e9cc7c448a4c096c019c268430452ea400595792b95a94a789",
+        "4/spectrum.dat": "1e2db9e59908929f0658deb05562959a168ee17440f7c88a37edfa95a4889c77",
+        "5/mccode.sim": "e81056a8b40e8689658a5c6b8eb9be170ca4fa81e4ac2ecef476e248cf4048e4",
+        "5/spectrum.dat": "785fa598519307edddf0f0ef7a6093cbf6d262fa3e4c61379c444321ee3fa372",
+        "mccode.dat": "363bdffafe14e1e7235aa93bf305779c8588a3bdf1bd83363d84e704a1748b52",
+        "mccode.sim": "1f5a1a32fe2dee0ca484211ac18a0100b1bce9c84b42b52f1ab4b4cbc3e0953d"
+      },
+      "artifact_bytes": 13298
+    },
+    {
+      "name": "ascii_parallel",
+      "options": [
+        "--scan_split=2",
+        "-M",
+        "-N",
+        "2",
+        "theta=-1,1",
+        "wavelength=3,5"
+      ],
+      "parallel": true,
+      "intentional_failure": false,
+      "nexus": false,
+      "scanned_parameters": [
+        "theta",
+        "wavelength"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 315183,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 5,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 316207,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 3,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 5,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 317231,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=McCode",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=ascii_parallel",
+        "tiny_scan.instr",
+        "--scan_split=2",
+        "-M",
+        "-N",
+        "2",
+        "theta=-1,1",
+        "wavelength=3,5"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "1",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 315183,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "2",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "5",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 316207,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 3,
+            "path": "3",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "5",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 317231,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [
+          "-1 3 6.28296e-07 7.8537e-08",
+          "1 3 1.88488e-06 2.3561e-07",
+          "-1 5 6.28294e-07 7.85367e-08",
+          "1 5 1.88489e-06 2.35611e-07"
+        ],
+        "summary_variables": "wavelength theta spectrum_I spectrum_ERR",
+        "summary_bytes": 532,
+        "has_root_sim": true,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "0/mccode.sim": "5d036e2bb00df4d8c70100a23aa4eb440f2f0aed6195ae8ce1e742c971c8249e",
+        "0/spectrum.dat": "1d3a83c6ae411404322622b906a5dcd5b311abb357d5202cabfc19e0d27f9dc9",
+        "1/mccode.sim": "94d99412683fcda85299e22f256fada60f2509a6b2ce54fbc433ae6ae178483a",
+        "1/spectrum.dat": "9cfa75fc188277f3c4bbcd6a823be3afaae01725765f67d88d097ec028ea7b70",
+        "2/mccode.sim": "4017fe7d25eb218451ff0a35ad973c03792860a900c69236d5cf601de8f37771",
+        "2/spectrum.dat": "5d1e3a80d5b81b205e2ec5748ead23149f68055e3bccbd84f14dd6b4fb457359",
+        "3/mccode.sim": "abae512ae14c7d25632b93bd12cf16ddb07a95a763382cb279b029e9ba221552",
+        "3/spectrum.dat": "2784fa753a78898f28a5a8efe9163b387bb562bd2bdd5c93da35923c32d4250a",
+        "mccode.dat": "523b974857b318a5baa0fb345177f04a47684030c55ea6bb326bf9431d86501a",
+        "mccode.sim": "deec08912ddfb92422ee29f07cf3a4e946354bc3da059c164cf0c0100589ab38"
+      },
+      "artifact_bytes": 8953
+    },
+    {
+      "name": "ascii_categorical_repeated",
+      "options": [
+        "-L",
+        "theta=0,1,0",
+        "wavelength=3,5,3",
+        "category=vanadium,nickel,vanadium"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": false,
+      "scanned_parameters": [
+        "theta",
+        "wavelength",
+        "category"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 5,
+            "category": "nickel",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=McCode",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=ascii_categorical_repeated",
+        "tiny_scan.instr",
+        "-L",
+        "theta=0,1,0",
+        "wavelength=3,5,3",
+        "category=vanadium,nickel,vanadium"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0",
+            "parameters": {
+              "theta": "0",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "1",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "5",
+              "category": "nickel",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "2",
+            "parameters": {
+              "theta": "0",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [
+          "0 1.25659e-06 1.57074e-07",
+          "1 3.76978e-06 4.71222e-07",
+          "2 1.25659e-06 1.57074e-07"
+        ],
+        "summary_variables": "theta category wavelength spectrum_I spectrum_ERR",
+        "summary_bytes": 560,
+        "has_root_sim": true,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "0/mccode.sim": "622ebf6b2cbfb741a26ad3a177e095f842d6bd86a300007a7cfe8ea045aa7235",
+        "0/spectrum.dat": "627748b29e96623122d544da16b86c22ce2f9e9c4179a187083cd19eb46fa406",
+        "1/mccode.sim": "fb57b84c904409e1ac03fe084fa2d2c2e45926f525ae39785f5e25faeb74de97",
+        "1/spectrum.dat": "7913bcc9ad2488cb391c542c60d03582fbbc2624d9fea4f9d18616f6fcf0ff02",
+        "2/mccode.sim": "442c601b7014d3175f9210a316cf835c9e830386cc288c541fd72b113d430795",
+        "2/spectrum.dat": "a117efa6e335caa31368a23eed0dcf7030dedd7a484b9770390fe54319181cab",
+        "mccode.dat": "36f8d4ff49a3feed20fe5be3e6dabdfbe0d432bd06baed8deccd901bfc5f0005",
+        "mccode.sim": "a7cfe70888dcfe148f6f67b5d371e84de9f414ab7c15bf71d5f841b2bab7eafa"
+      },
+      "artifact_bytes": 7301
+    },
+    {
+      "name": "ascii_partial",
+      "options": [
+        "-L",
+        "theta=0,1,2,3",
+        "fail=0,1,0,0"
+      ],
+      "parallel": false,
+      "intentional_failure": true,
+      "nexus": false,
+      "scanned_parameters": [
+        "theta",
+        "fail"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 1
+          },
+          "seed": 314159,
+          "expected_status": "failed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 2,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "not_attempted"
+        },
+        {
+          "point_id": 3,
+          "parameters": {
+            "theta": 3,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "not_attempted"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=McCode",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=ascii_partial",
+        "tiny_scan.instr",
+        "-L",
+        "theta=0,1,2,3",
+        "fail=0,1,0,0"
+      ],
+      "returncode": 1,
+      "failure": {
+        "native_exit_status": 23,
+        "message": "SCAN_FIXTURE_INTENTIONAL_FAILURE: fail requested"
+      },
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0",
+            "parameters": {
+              "theta": "0",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [
+          {
+            "point_id": 1,
+            "path": "1",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "3",
+              "category": "vanadium",
+              "fail": "1"
+            },
+            "seed": 314159
+          }
+        ],
+        "summary_rows": [
+          "0.0 0.0 1.25659e-06 1.57074e-07"
+        ],
+        "summary_variables": "fail theta spectrum_I spectrum_ERR",
+        "summary_bytes": 429,
+        "has_root_sim": true,
+        "missing_point_ids": [
+          1,
+          2,
+          3
+        ]
+      },
+      "sha256": {
+        "0/mccode.sim": "d040177caefae57a0cb8706cbcf065b55a0315692f838d83c0fc36e4f73f4b92",
+        "0/spectrum.dat": "caa6c213be67e1e22662fcdb9063d46d2359ea825c3a757da29572dd2869a640",
+        "1/mccode.sim": "3ffbfdbe8396debe53f8c0456e4c5f1fda2eab0d7f0e6ec16f9a63a72d067d19",
+        "mccode.dat": "011d619dee7af75a38048fe62ef7558c7c82cad8bb51f068871d76452232e78f",
+        "mccode.sim": "9122f0bf182165b4e33baa442773b5ca8b13e6d036b6736ef001140a3628b39d"
+      },
+      "artifact_bytes": 3659
+    },
+    {
+      "name": "ascii_paired",
+      "options": [
+        "-N",
+        "3",
+        "theta=-1,1",
+        "wavelength=2,6"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": false,
+      "scanned_parameters": [
+        "theta",
+        "wavelength"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 2,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 4,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 6,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=McCode",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=ascii_paired",
+        "tiny_scan.instr",
+        "-N",
+        "3",
+        "theta=-1,1",
+        "wavelength=2,6"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0",
+            "parameters": {
+              "theta": "-1",
+              "wavelength": "2",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "1",
+            "parameters": {
+              "theta": "0",
+              "wavelength": "4",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "2",
+            "parameters": {
+              "theta": "1",
+              "wavelength": "6",
+              "category": "vanadium",
+              "fail": "0"
+            },
+            "seed": 314159,
+            "detector_shape": [
+              4,
+              4
+            ],
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [
+          "-1 2 6.28296e-07 7.8537e-08",
+          "0 4 1.25659e-06 1.57074e-07",
+          "1 6 1.88489e-06 2.35611e-07"
+        ],
+        "summary_variables": "wavelength theta spectrum_I spectrum_ERR",
+        "summary_bytes": 504,
+        "has_root_sim": true,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "0/mccode.sim": "885a81802bf31ba017e1b35bb06e1454f12347dd905d9e9389e8682c8c2b705a",
+        "0/spectrum.dat": "b1ef62e771df6cb7930ec0aec5fe3cb3de05c9219583c83c3f9ab5a039ffdbd9",
+        "1/mccode.sim": "0d85e21aa50ca8793f4e699af729f46fe169742a863c2e2e51018f36571fe1bb",
+        "1/spectrum.dat": "c6a9740685734f42219bd4f3abfd025c34612fbec601a96d03a0e2d6255df51d",
+        "2/mccode.sim": "beddf74c1b94382df9f5e96825f94fa5fee9889fff54c0597d06d023ce101a3f",
+        "2/spectrum.dat": "aa3e8a7c3d2918c0466041d3a15fbc8b40441fd55c1a4decc1faf8f6f7c85b8d",
+        "mccode.dat": "a898297a6405b0a4494d0c0f2afabbee7ddfd1d75c3540b01b72d581e1f47465",
+        "mccode.sim": "8bd70b1bc06b02d336e7cf09d3fc3b1b1b69fae3eeb3dd534f0b890449da6e01"
+      },
+      "artifact_bytes": 6995
+    },
+    {
+      "name": "nexus_paired_categorical_repeated",
+      "options": [
+        "-L",
+        "theta=0,1,0",
+        "wavelength=3,5,3",
+        "category=vanadium,nickel,vanadium"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": true,
+      "scanned_parameters": [
+        "theta",
+        "wavelength",
+        "category"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 5,
+            "category": "nickel",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=NeXus",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=nexus_paired_categorical_repeated",
+        "tiny_scan.instr",
+        "-L",
+        "theta=0,1,0",
+        "wavelength=3,5,3",
+        "category=vanadium,nickel,vanadium"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "0",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "mccode.h5",
+            "entry": "entry2",
+            "parameters": {
+              "category": "nickel",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "5"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "mccode.h5",
+            "entry": "entry3",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "0",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [],
+        "summary_variables": null,
+        "summary_bytes": 0,
+        "has_root_sim": false,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "mccode.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mccode.h5": "f84e3449b65a33b3821afa15cb2215060c450e5f45be9b3f97c8589f9b8b3873"
+      },
+      "artifact_bytes": 169272
+    },
+    {
+      "name": "nexus_parallel",
+      "options": [
+        "--scan_split=2",
+        "-N",
+        "2",
+        "theta=-1,1"
+      ],
+      "parallel": true,
+      "intentional_failure": false,
+      "nexus": true,
+      "scanned_parameters": [
+        "theta"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 315183,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=NeXus",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=nexus_parallel",
+        "tiny_scan.instr",
+        "--scan_split=2",
+        "-N",
+        "2",
+        "theta=-1,1"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "0/mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "-1",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "1/mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "3"
+            },
+            "seed": 315183,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [],
+        "summary_variables": null,
+        "summary_bytes": 0,
+        "has_root_sim": false,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "0/mccode.h5": "76cfe0a79cef737745244d412fc29aa34359ec6dd58a5dfb0eb68ecdaec9feae",
+        "1/mccode.h5": "e1eeb587f4ff551b025fc3821dddaeaeb90eb72c4131a5c6383224457d318856",
+        "mccode.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "artifact_bytes": 114648
+    },
+    {
+      "name": "nexus_partial",
+      "options": [
+        "-L",
+        "theta=0,1,2,3",
+        "fail=0,1,0,0"
+      ],
+      "parallel": false,
+      "intentional_failure": true,
+      "nexus": true,
+      "scanned_parameters": [
+        "theta",
+        "fail"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 1
+          },
+          "seed": 314159,
+          "expected_status": "failed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 2,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "not_attempted"
+        },
+        {
+          "point_id": 3,
+          "parameters": {
+            "theta": 3,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "not_attempted"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=NeXus",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=nexus_partial",
+        "tiny_scan.instr",
+        "-L",
+        "theta=0,1,2,3",
+        "fail=0,1,0,0"
+      ],
+      "returncode": 1,
+      "failure": {
+        "native_exit_status": 23,
+        "message": "SCAN_FIXTURE_INTENTIONAL_FAILURE: fail requested"
+      },
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "0",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [
+          {
+            "point_id": 1,
+            "path": "mccode.h5",
+            "entry": "entry2",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "1",
+              "theta": "1",
+              "wavelength": "3"
+            },
+            "seed": 314159
+          }
+        ],
+        "summary_rows": [],
+        "summary_variables": null,
+        "summary_bytes": 0,
+        "has_root_sim": false,
+        "missing_point_ids": [
+          1,
+          2,
+          3
+        ]
+      },
+      "sha256": {
+        "mccode.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mccode.h5": "07916c483647715f2982a743e973fb0298b0f801a4d33512f980903bb28ca350"
+      },
+      "artifact_bytes": 70192
+    },
+    {
+      "name": "nexus_1d",
+      "options": [
+        "-N",
+        "3",
+        "theta=-1,1"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": true,
+      "scanned_parameters": [
+        "theta"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 3,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=NeXus",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=nexus_1d",
+        "tiny_scan.instr",
+        "-N",
+        "3",
+        "theta=-1,1"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "-1",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "mccode.h5",
+            "entry": "entry2",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "0",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "mccode.h5",
+            "entry": "entry3",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "3"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [],
+        "summary_variables": null,
+        "summary_bytes": 0,
+        "has_root_sim": false,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "mccode.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mccode.h5": "42971c9f8312397e2b718171912f79180f241a01f61b705b0b4bcc5fcf74acab"
+      },
+      "artifact_bytes": 169008
+    },
+    {
+      "name": "nexus_cartesian_2x3",
+      "options": [
+        "-L",
+        "theta=-1,1,-1,1,-1,1",
+        "wavelength=2,2,4,4,6,6"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": true,
+      "scanned_parameters": [
+        "theta",
+        "wavelength"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 2,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 2,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 4,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 3,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 4,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 4,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 6,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 5,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 6,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=NeXus",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=nexus_cartesian_2x3",
+        "tiny_scan.instr",
+        "-L",
+        "theta=-1,1,-1,1,-1,1",
+        "wavelength=2,2,4,4,6,6"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "-1",
+              "wavelength": "2"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "mccode.h5",
+            "entry": "entry2",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "2"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "mccode.h5",
+            "entry": "entry3",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "-1",
+              "wavelength": "4"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 3,
+            "path": "mccode.h5",
+            "entry": "entry4",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "4"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 4,
+            "path": "mccode.h5",
+            "entry": "entry5",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "-1",
+              "wavelength": "6"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 5,
+            "path": "mccode.h5",
+            "entry": "entry6",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "6"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [],
+        "summary_variables": null,
+        "summary_bytes": 0,
+        "has_root_sim": false,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "mccode.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mccode.h5": "5ac49693f99a41be53a56d659c80d877f7590b27c746c18b98c6f3da296aa79a"
+      },
+      "artifact_bytes": 336888
+    },
+    {
+      "name": "nexus_paired",
+      "options": [
+        "-N",
+        "3",
+        "theta=-1,1",
+        "wavelength=2,6"
+      ],
+      "parallel": false,
+      "intentional_failure": false,
+      "nexus": true,
+      "scanned_parameters": [
+        "theta",
+        "wavelength"
+      ],
+      "intended_points": [
+        {
+          "point_id": 0,
+          "parameters": {
+            "theta": -1,
+            "wavelength": 2,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 1,
+          "parameters": {
+            "theta": 0,
+            "wavelength": 4,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        },
+        {
+          "point_id": 2,
+          "parameters": {
+            "theta": 1,
+            "wavelength": 6,
+            "category": "vanadium",
+            "fail": 0
+          },
+          "seed": 314159,
+          "expected_status": "completed"
+        }
+      ],
+      "command": [
+        "mcrun",
+        "--force-compile",
+        "--format=NeXus",
+        "--seed=314159",
+        "--ncount=64",
+        "--dir=nexus_paired",
+        "tiny_scan.instr",
+        "-N",
+        "3",
+        "theta=-1,1",
+        "wavelength=2,6"
+      ],
+      "returncode": 0,
+      "observed": {
+        "points": [
+          {
+            "point_id": 0,
+            "path": "mccode.h5",
+            "entry": "entry1",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "-1",
+              "wavelength": "2"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 1,
+            "path": "mccode.h5",
+            "entry": "entry2",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "0",
+              "wavelength": "4"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          },
+          {
+            "point_id": 2,
+            "path": "mccode.h5",
+            "entry": "entry3",
+            "parameters": {
+              "category": "vanadium",
+              "fail": "0",
+              "theta": "1",
+              "wavelength": "6"
+            },
+            "seed": 314159,
+            "detector_datasets": {
+              "Wavelength__AA_": [
+                4
+              ],
+              "data": [
+                4
+              ],
+              "errors": [
+                4
+              ],
+              "ncount": [
+                4
+              ]
+            },
+            "event_count": 64.0
+          }
+        ],
+        "incomplete_points": [],
+        "summary_rows": [],
+        "summary_variables": null,
+        "summary_bytes": 0,
+        "has_root_sim": false,
+        "missing_point_ids": []
+      },
+      "sha256": {
+        "mccode.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mccode.h5": "16cebfaaf907e87c3bb4f6876cee2edbc286f48b9afaad624a09c4bf514907ab"
+      },
+      "artifact_bytes": 169088
+    }
+  ],
+  "instrument_sha256": "18cad4159348e443ee9aafd292d7198b5a997ce2108e45fd463def2abd034447"
+}

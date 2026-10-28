@@ -1,0 +1,21 @@
+# Instrument-source: 'tiny_scan.instr'
+# Date: Wed Oct 28 13 51 2026
+# Ncount: 64
+# Numpoints: 6
+# Param: theta = -1, wavelength = 2
+# type: multiarray_1d(6)
+# title: Scan of wavelength, theta
+# xlabel: 'wavelength, theta'
+# ylabel: 'Intensity'
+# xvars: wavelength, theta
+# yvars: (spectrum_I,spectrum_ERR)
+# list: ['-1', '1', '-1', '1', '-1', '1']
+# xlimits: 1 6
+# filename: mccode.dat
+# variables: wavelength theta spectrum_I spectrum_ERR
+-1.0 2.0 6.28296e-07 7.8537e-08
+1.0 2.0 1.88489e-06 2.35611e-07
+-1.0 4.0 6.28296e-07 7.8537e-08
+1.0 4.0 1.88489e-06 2.35611e-07
+-1.0 6.0 6.28296e-07 7.8537e-08
+1.0 6.0 1.88489e-06 2.35611e-07

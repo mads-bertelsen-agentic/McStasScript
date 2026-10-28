@@ -1,0 +1,48 @@
+mcstas simulation description file for tiny_scan.
+Date:    Wed Oct 28 13:51:31 2026
+Program:  3.7.14, git
+
+begin instrument: tiny_scan
+  File: ascii_categorical_repeated/0/mccode
+  Source: tiny_scan.instr
+  Parameters:  theta(double) wavelength(double) category(string) fail(int)
+  Trace_enabled: yes
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation: ascii_categorical_repeated/0
+  Format: McCode with text headers
+  URL: http://www.mccode.org
+  Creator:  3.7.14, git
+  Instrument: tiny_scan.instr
+  Ncount: 64
+  Trace: no
+  Gravitation: no
+  Seed: 314159
+  Directory: ascii_categorical_repeated/0
+  Param: theta=0
+  Param: wavelength=3
+  Param: category=vanadium
+  Param: fail=0
+end simulation
+
+begin data
+  Date: Wed Oct 28 13:51:31 2026 (1793191891)
+  type: array_1d(4)
+  Source: tiny_scan (tiny_scan.instr)
+  component: spectrum
+  position: 0 0 1
+  title: Wavelength monitor
+  Ncount: 64
+  filename: spectrum.dat
+  statistics: X0=3.25; dX=0;
+  signal: Min=0; Max=1.25659e-06; Mean=3.14148e-07;
+  values: 1.25659e-06 1.57074e-07 64
+  xvar: L
+  yvar: (I,I_err)
+  xlabel: Wavelength [AA]
+  ylabel: Intensity
+  xlimits: 1 7
+  variables: L I I_err N
+end data

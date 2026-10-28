@@ -1,0 +1,34 @@
+# Format: McCode with text headers
+# URL: http://www.mccode.org
+# Creator:  3.7.14, git
+# Instrument: tiny_scan.instr
+# Ncount: 64
+# Trace: no
+# Gravitation: no
+# Seed: 314159
+# Directory: ascii_cartesian_2x3/2
+# Param: theta=-1
+# Param: wavelength=4
+# Param: category=vanadium
+# Param: fail=0
+# Date: Wed Oct 28 13:51:25 2026 (1793191885)
+# type: array_1d(4)
+# Source: tiny_scan (tiny_scan.instr)
+# component: spectrum
+# position: 0 0 1
+# title: Wavelength monitor
+# Ncount: 64
+# filename: spectrum.dat
+# statistics: X0=3.95313; dX=0.748534;
+# signal: Min=0; Max=3.33782e-07; Mean=1.57074e-07;
+# values: 6.28296e-07 7.8537e-08 64
+# xvar: L
+# yvar: (I,I_err)
+# xlabel: Wavelength [AA]
+# ylabel: Intensity
+# xlimits: 1 7
+# variables: L I I_err N
+1.75 0 0 0 
+3.25 3.337820239e-07 5.724314486e-08 34 
+4.75 2.945141303e-07 5.377067757e-08 30 
+6.25 0 0 0 
