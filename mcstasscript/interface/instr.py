@@ -2901,6 +2901,11 @@ class McCode_instr(BaseCalculator):
         This method will write the instrument to disk and then run it using
         the mcrun command of the system. Settings are set using settings
         method.
+
+        Returns
+        -------
+        McStasDataCollection
+            List-compatible collection of monitor datasets from the simulation.
         """
 
         self.__add_input_to_mcpl()

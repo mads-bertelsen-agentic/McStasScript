@@ -1,6 +1,8 @@
 # Version number
 from ._version import __version__
 
+from .data.collection import McStasDataCollection
+
 from .interface.instr import McStas_instr
 from .interface.instr import McXtrace_instr
 

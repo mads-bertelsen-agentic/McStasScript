@@ -24,7 +24,7 @@ def name_search(name, data_list):
     data_list : List of McStasData instances
         List of datasets to search
     """
-    if type(data_list) is not list:
+    if not isinstance(data_list, list):
         raise RuntimeError(
             "name_search function needs list of McStasData as input.")
 
@@ -79,7 +79,7 @@ def name_plot_options(name, data_list, **kwargs):
         McStasPlotOptions
     """
     object_to_modify = name_search(name, data_list)
-    if type(object_to_modify) is not list:
+    if not isinstance(object_to_modify, list):
         object_to_modify.set_plot_options(**kwargs)
     else:
         for data_object in object_to_modify:
@@ -93,6 +93,11 @@ def load_data(foldername):
     ----------
         foldername : string
             Name of the folder from which to load data
+
+    Returns
+    -------
+    McStasDataCollection
+        List-compatible collection of monitor datasets from one simulation.
     """
     if not os.path.isdir(foldername):
         raise RuntimeError("Could not find specified foldername for"

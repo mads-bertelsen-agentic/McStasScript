@@ -24,6 +24,7 @@ Documentation
    user_guide/component_object
    user_guide/parameters_and_variables
    user_guide/data
+   user_guide/data_collection
    user_guide/plotting
    user_guide/functions
    user_guide/widgets

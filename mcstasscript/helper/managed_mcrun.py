@@ -7,6 +7,7 @@ import h5py
 import re
 
 from mcstasscript.helper.formatting import bcolors
+from mcstasscript.data.collection import McStasDataCollection
 from mcstasscript.data.data import McStasMetaData
 from mcstasscript.data.data import McStasDataBinned
 from mcstasscript.data.data import McStasDataEvent
@@ -322,7 +323,7 @@ class ManagedMcrun:
         Method for loading data from a mcstas simulation
 
         Loads data on all monitors in a McStas data folder, and returns these
-        as a list of McStasData objects.
+        as a list-compatible McStasDataCollection.
 
         Parameters
         ----------
@@ -367,7 +368,7 @@ def load_results(data_folder_name):
     Function for loading data from a mcstas simulation
 
     Loads data on all monitors in a McStas data folder, and returns these
-    as a list of McStasData objects.
+    as a list-compatible McStasDataCollection.
 
     Parameters
     ----------
@@ -391,6 +392,7 @@ def load_results(data_folder_name):
     else:
         raise NameError("No mccode.sim or mccode.h5 in data folder.")
 
+    results = McStasDataCollection()
     if NeXus:
         # Open mccode to read metadata for all datasets written to disk
         with h5py.File(os.path.join(data_folder_name, "mccode.h5"), "r", swmr=True) as f:
@@ -398,7 +400,6 @@ def load_results(data_folder_name):
             # Pass file object to all functions to avoid multiple open / close
             metadata_list = load_metadata_nexus(f)
 
-            results = []
             for metadata in metadata_list:
                 result = load_monitor_nexus(metadata, f)
                 result.set_data_location(data_folder_name)
@@ -408,7 +409,6 @@ def load_results(data_folder_name):
         # Older workflow, still handles both text and NeXus
         metadata_list = load_metadata(data_folder_name)
 
-        results = []
         for metadata in metadata_list:
             result = load_monitor(metadata, data_folder_name)
             result.set_data_location(data_folder_name)
