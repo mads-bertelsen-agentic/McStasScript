@@ -37,6 +37,7 @@ from mcstasscript.helper.search_statement import SearchStatement, SearchStatemen
 from mcstasscript.helper.signature_set_parameters import SetParametersCallableInstrument
 from mcstasscript.instrument_diagram.make_diagram import instrument_diagram
 from mcstasscript.instrument_diagnostics.intensity_diagnostics import IntensityDiagnostics
+from mcstasscript.helper.scan_preflight import scan_preflight as _scan_preflight
 
 
 class McCode_instr(BaseCalculator):
@@ -514,6 +515,10 @@ class McCode_instr(BaseCalculator):
     @output_path.setter
     def output_path(self, value: str) -> None:
         self.calculator_base_dir = value
+
+    def scan_preflight(self, plan, *, settings=None):
+        """Validate a scan without changing or executing this instrument."""
+        return _scan_preflight(self, plan, settings=settings)
 
     def init_parameters(self):
         """

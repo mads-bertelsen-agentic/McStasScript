@@ -25,6 +25,7 @@ Documentation
    user_guide/parameters_and_variables
    user_guide/data
    user_guide/data_collection
+   user_guide/scan_plans
    user_guide/scan_results
    user_guide/plotting
    user_guide/functions
