@@ -1,0 +1,17 @@
+# Instrument-source: 'tiny_scan.instr'
+# Date: Wed Oct 28 15 59 2026
+# Ncount: 64
+# Numpoints: 2
+# Param: theta = -1
+# type: multiarray_1d(2)
+# title: Scan of theta
+# xlabel: 'theta'
+# ylabel: 'Intensity'
+# xvars: theta
+# yvars: (spectrum_I,spectrum_ERR)
+# list: ['-1', '1']
+# xlimits: -1 1
+# filename: mccode.dat
+# variables: theta spectrum_I spectrum_ERR
+-1.0 6.28298e-07 7.85372e-08
+1.0 1.88489e-06 2.35611e-07

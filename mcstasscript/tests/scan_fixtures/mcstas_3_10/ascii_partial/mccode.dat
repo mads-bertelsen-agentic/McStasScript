@@ -1,0 +1,18 @@
+# Instrument-source: 'tiny_scan.instr'
+# Date: Wed Oct 28 15 59 2026
+# Ncount: 64
+# Numpoints: 4
+# Param: theta = 0, fail = 0
+# type: multiarray_1d(4)
+# title: Scan of fail, theta
+# xlabel: 'fail, theta'
+# ylabel: 'Intensity'
+# xvars: fail, theta
+# yvars: (spectrum_I,spectrum_ERR)
+# list: ['0', '1', '2', '3']
+# xlimits: 0.0 3.0
+# filename: mccode.dat
+# variables: fail theta spectrum_I spectrum_ERR
+0.0 0.0 1.2566e-06 1.57074e-07
+2.0 0.0 2.51317e-06 3.14147e-07
+3.0 0.0 3.14149e-06 3.92686e-07

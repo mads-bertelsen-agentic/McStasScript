@@ -41,6 +41,18 @@ class TestScanFixtures(unittest.TestCase):
                 self.assertEqual(case["intended_points"], frozen["intended_points"])
                 self.assertEqual(self.capture.native_arguments(case), frozen["command"])
 
+    def test_newer_version_fixtures_verify_without_subprocesses(self):
+        spec = importlib.util.spec_from_file_location(
+            "scan_fixture_verify_310", FIXTURES / "mcstas_3_10" / "verify.py")
+        verifier = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(verifier)
+        output = io.StringIO()
+        with patch("subprocess.run", side_effect=AssertionError("No native execution")) as run:
+            with redirect_stdout(output):
+                verifier.main()
+        run.assert_not_called()
+        self.assertIn("Verified 29 native files, 15 point/entry records", output.getvalue())
+
     def test_categorical_summary_uses_indices_not_declared_coordinates(self):
         case = self.cases["ascii_categorical_repeated"]
         planned = case["intended_points"]

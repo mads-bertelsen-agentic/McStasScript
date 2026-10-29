@@ -105,6 +105,19 @@ def load_data(foldername):
 
     return managed_mcrun.load_results(foldername)
 
+
+def load_scan(path):
+    """Load an ASCII scan directory/summary or combined/per-point NeXus scan.
+
+    Returns a :class:`mcstasscript.ScanResult` with detached metadata and lazy
+    point data. Does not require an instrument or invoke McStas. Original plan
+    IDs, settings, and execution outcomes remain unknown unless the files supply
+    them; see ``scan.metadata['diagnostics']`` for native format limitations.
+    """
+    from mcstasscript.data.scan_ascii import load_scan as read_scan
+
+    return read_scan(path)
+
 def load_metadata(data_folder_name):
     """
     Function that loads metadata from a mcstas simulation

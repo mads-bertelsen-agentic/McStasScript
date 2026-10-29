@@ -159,13 +159,16 @@ class ScanPointData:
 
 
 class ScanDataError(RuntimeError):
-    """Point output is unavailable; summary and execution status remain intact."""
+    """Unavailable output, optionally retaining per-monitor diagnostic sidecars."""
 
-    def __init__(self, message, data_status="unreadable"):
+    def __init__(self, message, data_status="unreadable", *, diagnostics=None,
+                 availability=None):
         if data_status not in ("unknown", "missing", "unreadable"):
             raise ValueError("Invalid data status for a point-loading error.")
         super().__init__(message)
         self.data_status = data_status
+        self.diagnostics = deepcopy(diagnostics) if diagnostics is not None else None
+        self.availability = deepcopy(availability) if availability is not None else None
 
 
 class ScanPoint:
@@ -238,7 +241,9 @@ class ScanPoint:
         self.diagnostics = deepcopy(report.diagnostics)
         self.array_availability = deepcopy(report.availability)
         if report.diagnostics and not report.data:
-            raise ScanDataError("No readable monitors: {}".format(report.diagnostics))
+            raise ScanDataError("No readable monitors: {}".format(report.diagnostics),
+                                diagnostics=report.diagnostics,
+                                availability=report.availability)
         self._loaded = report.data
         self.data_status = "partial" if report.diagnostics else "available"
         if report.diagnostics:
@@ -246,13 +251,19 @@ class ScanPoint:
                 self.point_id, self.source, report.diagnostics), UserWarning, stacklevel=3)
 
     def _cache_error(self, error):
+        if isinstance(error, ScanDataError):
+            if error.diagnostics is not None:
+                self.diagnostics = deepcopy(error.diagnostics)
+            if error.availability is not None:
+                self.array_availability = deepcopy(error.availability)
         state = (error.data_status if isinstance(error, ScanDataError) else
                  "missing" if isinstance(error, FileNotFoundError) else "unreadable")
         message = "Cannot load scan point {!r} from {}: {}".format(
             self.point_id, self.source, error)
         self.data_status = state
         self._load_error = (message, state)
-        return ScanDataError(message, state)
+        return ScanDataError(message, state, diagnostics=self.diagnostics,
+                             availability=self.array_availability)
 
     @property
     def data(self):
@@ -260,7 +271,8 @@ class ScanPoint:
         if self._loaded is not None:
             return self._loaded
         if self._load_error is not None:
-            raise ScanDataError(*self._load_error)
+            raise ScanDataError(*self._load_error, diagnostics=self.diagnostics,
+                                availability=self.array_availability)
         try:
             if self._loader is None:
                 state = "missing" if self.source is None else self.data_status

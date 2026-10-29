@@ -184,3 +184,7 @@ arrays, Cartesian expansion, binaries, or generated C in the repository.
 Packaging must graft this entire directory into the source distribution,
 including the `.h5`, `.dat`, `.sim`, `.instr`, and `.json` files, using
 `graft mcstasscript/tests/scan_fixtures` in `MANIFEST.in`.
+
+For the separately versioned McStas 3.10.0 compatibility probe, see
+[`mcstas_3_10/README.md`](mcstas_3_10/README.md). It does not replace these
+3.7.14 native fixtures.

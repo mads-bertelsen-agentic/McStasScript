@@ -8,6 +8,7 @@ from .interface.instr import McStas_instr
 from .interface.instr import McXtrace_instr
 
 from .interface.functions import load_data
+from .interface.functions import load_scan
 from .interface.functions import load_metadata
 from .interface.functions import load_monitor
 from .interface.functions import name_plot_options

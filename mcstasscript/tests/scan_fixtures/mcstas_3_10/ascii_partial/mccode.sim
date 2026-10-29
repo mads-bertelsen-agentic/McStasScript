@@ -1,0 +1,27 @@
+begin instrument:
+  Creator: mcstas 3.10.0
+  Source: tiny_scan.instr
+  Parameters:  theta, fail
+  Trace_enabled: no
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation
+Date: Wed Oct 28 15 59 2026
+Ncount: 64
+Numpoints: 4
+Param: theta = 0, theta = 1, theta = 2, theta = 3, fail = 0, fail = 1, fail = 0, fail = 0
+end simulation
+
+begin data
+type: multiarray_1d(4)
+title: Scan of theta, fail
+xvars: theta, fail
+yvars: (spectrum_I,spectrum_ERR
+xlabel: 'theta, fail'
+ylabel: 'Intensity'
+xlimits: 0.0 3.0
+filename: mccode.dat
+variables: theta failspectrum_I spectrum_ERR
+end data

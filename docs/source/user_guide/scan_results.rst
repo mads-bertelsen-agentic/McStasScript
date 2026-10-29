@@ -1,120 +1,163 @@
 Scan Result Model
 =================
 
-This is the execution-free foundation for scan loading. The current milestone
-provides result records and native ASCII/NeXus fixtures, not ``load_scan()`` or
-``instrument.scan()``. Readers and execution will be added in that order.
-No new dependencies are required.
+This page describes the execution-free scan-result model. Native ASCII and
+NeXus output can be loaded without starting McStas, running a subprocess, or
+requiring an instrument object. Loading observes the files that exist; it does
+not reconstruct an execution plan.
+No new dependencies are required. Scan execution and overview plotting are
+separate, later features.
 
-Points, Identities, And Sources
--------------------------------
+For runnable examples that write an instrument, run native ``!mcrun`` scans,
+and read their output, see :doc:`../tutorial/McStasScript_tutorial_7_native_scans`.
 
-:class:`~mcstasscript.ScanResult` holds an ordered tuple of
-:class:`~mcstasscript.ScanPoint` objects. A point has a stable integer or string
-``point_id``, parameter values, optional source location, summary observations,
-and independent execution and data statuses. Points with identical parameter
-values remain separate measurements. Source order is preserved; a grid is never
-inferred from the number of parameters or from Cartesian-looking observations.
-If the original requested plan is unknown, ``scan.plan`` remains ``None``.
+Loading Native Scans
+--------------------
 
-Low-level reader support records live in ``mcstasscript.data.scan``:
+Use the public ``ms.load_scan`` entry point for a scan directory, an ASCII
+summary, or a NeXus file:
 
 .. code-block:: python
 
-   from mcstasscript import ScanPoint, ScanResult
-   from mcstasscript.data.scan import (
-       ScanMonitor, ScanMonitorSummary, ScanSource,
-   )
+   import mcstasscript as ms
 
-   monitor = ScanMonitor("PSD", "PSD.dat")
-   point = ScanPoint(
-       point_id=7,
-       parameters={"theta": 2.0, "sample": "vanadium"},
-       source=ScanSource("existing_scan/7"),
-       summaries=[ScanMonitorSummary(
-           monitor, total_I=120.0, total_E=3.0,
-           availability={"total_N": False},
-           provenance={"total_I": "native summary", "total_E": "native summary"},
-       )],
-   )
-   scan = ScanResult([point], parameter_names=["theta", "sample"])
-   psd = scan.dataset("PSD")
-   print(psd.total_I, psd.total_E, psd.coordinates)
+   ascii_scan = ms.load_scan("ascii_scan")
+   ascii_summary = ms.load_scan("ascii_scan/mccode.dat")
+   custom_summary = ms.load_scan("ascii_scan/summary.results")
+   combined_file = ms.load_scan("nexus_scan/mccode.h5")
+   combined_directory = ms.load_scan("nexus_scan")
+   old_per_point = ms.load_scan("old_nexus_scan")  # 0/mccode.h5, 1/mccode.h5, ...
 
-``ScanSource`` is a passive locator, not a file handle or a loader. ASCII sources
-identify point directories. NeXus sources identify a file and an explicit entry:
-``ScanSource("scan/mccode.h5", format="nexus", entry="entry3")``. Relative file
-paths are anchored at construction so later working-directory changes cannot
-redirect loading. Entry numbers identify storage, not necessarily original point
-IDs. Readers must verify their association with measurements.
+Any non-HDF5 file supplied as a path is read as an ASCII summary, including a
+custom extension. A directory containing one combined ``mccode.h5`` is loaded
+as combined NeXus; a directory containing numbered per-point HDF5 files uses
+those point directories. Summary-only points provide scalar monitor results
+but have no full-data source.
 
-``ScanMonitor`` captures a logical component/filename identity independently of
-mutable display names. An optional discriminator distinguishes otherwise
-identical outputs. ``scan.dataset()`` follows collection-style name precedence
-and explicit ``component=`` / ``filename=`` selection, but resolves an identity
-once across the whole scan. Missing instances do not fall back to another output
-at individual points. Supply an exact ``ScanMonitor`` to select a discriminator.
-An unknown filename is represented as ``None``, not guessed from another point.
+Points, Identities, And Parameters
+----------------------------------
 
-Summary Availability
---------------------
+``ScanResult.points`` is the ordered collection of observed
+``ScanPoint`` records. Numbered ASCII directories, and legacy per-point NeXus
+directories such as ``0/mccode.h5``, have known numeric IDs from their
+directory names; their ``scan.metadata['point_id_basis']`` is
+``'numbered directories'``. Summary-only ASCII input uses an encoded row ID or
+summary row order when no directory ID exists.
 
-A monitor view returns one value per point, retaining missing observations as
-``NaN``. ``point_ids`` and ``coordinates`` retain canonical point order.
-``valid`` is the finite-intensity mask, and ``validity("total_E")`` or
-``validity("total_N")`` selects another quantity's mask.
+Combined NeXus assigns zero-based integer IDs in storage order. These IDs are
+synthetic collection IDs, not the one-based ``entry1`` names and not original
+plan IDs. For this layout
+``scan.metadata['point_id_basis'] == 'entry order'``. If a failed point has no
+entry, later entries are compacted in storage order; the loader cannot map them
+back to the requested plan. ``scan.plan`` remains ``None``. Never infer a
+requested grid or point count from coordinates, entry names, headers, or
+``Numpoints``.
 
-``ScanMonitorSummary.availability`` distinguishes an observed value (``True``),
-an inspected but absent quantity (``False``), and unknown availability (``None``).
-An absent summary record is unknown, not evidence that a monitor was absent;
-readers record inspected absence explicitly. The validated summary availability
-mapping is read-only. An explicit zero is a valid observation, not missing data.
-Availability is
-independent of provenance, which records whether a total came from a native
-summary, monitor metadata, or an explicitly documented derivation. Summary inputs
-are detached from mutable metadata attached to full monitor datasets.
+Native parameter declarations are used when present. Declared integer, floating
+point, and string parameters retain their numeric or string types; values such
+as a declared string ``001`` are not silently converted to an integer. Point
+metadata is authoritative when a native summary header orders coordinates
+differently. Repeated parameter values remain separate points.
 
-Full-array availability is separate. A reported total error does not prove that
-an error array exists. In particular, compatibility zero-fills in ordinary
-single-run readers must not be presented as known zero uncertainties by scans.
-Readers populate the ``ScanPointData.availability`` sidecar before any such
-fallback, without changing the existing single-run numeric results.
+Summary Association
+-------------------
 
-Lazy Data And Diagnostics
--------------------------
+Use a summary view without loading detector arrays:
 
-At this milestone, a reader supplies a ``loader(source)`` callback returning
-``ScanPointData(data, diagnostics=..., availability=...)``. The model itself
-performs no file discovery or parsing. ``data`` is a ``McStasDataCollection`` of
-readable monitors; diagnostic and array-availability mappings use stable
-``ScanMonitor`` keys. A point can alternatively be constructed with already loaded
-``data=``. Summary access, monitor selection, and point inspection never trigger
-the loader.
+.. code-block:: python
 
-Explicit ``point.data`` access calls the loader once and returns the same cached
-collection thereafter, including when it is empty. Partial results preserve
-readable monitors, retain per-monitor diagnostics, and warn once. Entirely
-unreadable results raise ``ScanDataError`` with the point ID and source. Expected
-failures are cached rather than silently retried. ``point.clear_cache()`` drops
-cached arrays and errors and explicitly permits a new load; it does not discard
-summaries or change execution status. Cached arrays are shared mutable objects.
+   spectrum = ascii_scan.dataset("spectrum")
+   print(spectrum.total_I, spectrum.coordinates)
+   point_data = ascii_scan.points[0].data  # first full-data access; then cached
 
-Callbacks must close their files and return detached data. They translate expected
-format failures into ``ScanDataError``; ordinary I/O errors are also handled.
-Unexpected programming errors propagate without being classified as failed
-measurements. Automatic cache eviction, concurrent loading, and callback
-serialization are not part of this milestone.
+Summary rows attach only when their point identity or parameter coordinates give
+an unambiguous match. Ambiguous, conflicting, or duplicate-coordinate evidence
+is not used to guess an association. Rows that cannot be safely attached are
+either retained as summary-only records or remain, with their raw contents, in
+``scan.metadata['unassociated_summary_rows']``; the reason is retained in
+``scan.metadata['diagnostics']``. Summary-only monitor metadata includes the
+native raw row and line number.
 
-Execution Evidence
-------------------
+Categorical summaries can contain numeric category codes instead of labels.
+For a summary-only point, those codes remain in
+``point.metadata['encoded_parameters']`` and unavailable names are listed in
+``point.metadata['unavailable_parameters']``. The loader never invents labels
+or reconstructs missing coordinates from a code.
+Legacy whole-row indices are retained as ``point.metadata['encoded_point_id']``.
 
-``point.status`` records execution evidence and normally stays ``"unknown"`` for
-native files without an independent status record. ``point.data_status`` records
-``"unknown"``, ``"available"``, ``"partial"``, ``"missing"``, or
-``"unreadable"``. Successfully loading data does not establish execution success;
-failed execution may also leave readable data. ``scan.execution`` stores aggregate
-process evidence separately and never overwrites point status.
+Native headers and declared counts are advisory. ASCII variable order can be
+hash-dependent or differ from row order, and native ``Numpoints`` can be a
+per-axis count or describe a complete plan when rows are missing. Point
+metadata and observed rows are retained instead of being corrected to fit a
+header.
 
-The native fixture provenance and capability matrix are documented in
-``mcstasscript/tests/scan_fixtures/README.md``. They describe observed McStas
-3.7.14 layouts and limitations, not a blanket guarantee for other releases.
+Mixed ASCII And NeXus Output
+----------------------------
+
+A root ASCII summary alongside a combined ``mccode.h5`` is supported: scalar
+summary values and NeXus arrays are merged only after point identity and total
+values are validated. If numbered directories contain full ASCII detector files
+as well as NeXus output, loading the directory rejects the competing full
+sources. Select the NeXus file explicitly, for example
+``ms.load_scan("mixed/mccode.h5")``.
+
+Numbered ASCII directories that contain metadata-only ``mccode.sim`` files can
+be merged with NeXus arrays. The association must be unique; repeated
+coordinates need a distinguishing seed, and conflicts or ambiguity are
+rejected rather than silently combined.
+
+Execution, Summaries, And Data
+------------------------------
+
+Native files do not provide an independent execution-status record. Therefore
+native loads have ``scan.execution == {}`` and leave ``point.status`` as
+``"unknown"``. ``point.data_status`` separately reports full-data readability
+(``"unknown"``, ``"available"``, ``"partial"``, ``"missing"``, or
+``"unreadable"``); readable data does not prove execution success.
+
+Summary totals and full detector-array availability are separate. A monitor
+view represents missing totals as ``NaN`` and exposes a True/False/None
+``availability`` state. Full-data readers populate
+``point.array_availability`` and per-monitor diagnostics before legacy loaders
+can zero-fill missing ``Error`` or ``Ncount`` arrays; a compatibility zero is
+not evidence of an observed zero uncertainty or count.
+
+Point data is lazy. Accessing ``point.data`` invokes its detached loader once
+and caches successful, partial, empty, and expected-error results. Partial
+loads retain readable monitors and per-monitor diagnostics. An entirely
+unreadable point raises ``ScanDataError`` with the point and source context;
+expected errors are not silently retried. ``point.clear_cache()`` explicitly
+permits another load without discarding summaries or changing execution status.
+Summary access and monitor selection do not trigger array loading.
+
+Fixture-Version Scope
+---------------------
+
+The retained native fixtures show version-specific behavior rather than a
+portable scan-format contract:
+
+* **Seeds:** McStas 3.7.14 reuses base seed ``314159`` for sequential points,
+  while parallel points use ``314159 + 1024 * point_index``. McStas 3.10.0
+  applies the point-index seed offset to both sequential and parallel points.
+* **Categorical summaries:** In 3.7.14, a nonnumeric parameter can replace the
+  whole summary coordinate prefix with a zero-based row index; point metadata
+  remains authoritative. In 3.10.0, summaries contain per-list numeric category
+  indices while labels remain in point metadata, and repeated coordinates stay
+  distinct.
+* **Partial runs:** The 3.7.14 ASCII fixture retains failed-point metadata but
+  has no later point outputs; its NeXus fixture retains failed-point metadata
+  without full data. In 3.10.0, ASCII continues after the failed point, while
+  combined NeXus contains entries for successful points only, so omitted plan
+  IDs remain unknown.
+* **Parallel output:** 3.7.14 NeXus split output uses separate
+  ``0/mccode.h5`` and ``1/mccode.h5`` files. 3.10.0 merges split output into a
+  root ``mccode.h5``; it also supports unequal comma-separated ``-N`` counts
+  and list products through ``-L -M``, and fixes the ``--scan_split=2 -L``
+  summary failure. The single ``-M -N N`` form still declares a per-axis
+  count.
+
+See ``mcstasscript/tests/scan_fixtures/README.md`` for fixture provenance and
+the capability matrix, and ``mcstasscript/tests/scan_fixtures/mcstas_3_10/README.md``
+for the McStas 3.10.0 compatibility probe. These are
+observations of the captured McStas versions, not universal guarantees for
+other McStas releases or McXtrace.

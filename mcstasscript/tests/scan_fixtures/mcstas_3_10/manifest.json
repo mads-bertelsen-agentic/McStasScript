@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "fixture_set": "mcstas_3_10",
+  "purpose": "Small native McStas 3.10.0 compatibility fixtures; no McStasScript execution or loader API is used.",
+  "captured": "2026-10-28",
+  "environment": {
+    "bootstrap": "source \"$HOME/miniforge3/etc/profile.d/mamba.sh\" && mamba activate mcstasscript_mcstas",
+    "conda_environment": "mcstasscript_mcstas",
+    "conda_prefix": "/Users/user/miniforge3/envs/mcstasscript_mcstas",
+    "platform": "macOS arm64",
+    "python": "3.14.6 | packaged by conda-forge | Clang 20.1.8",
+    "numpy": "2.5.1",
+    "h5py": "3.16.0",
+    "hdf5": "1.14.6",
+    "native_hdf5_root": "1.14.6",
+    "native_nexus_version": "4.4.2",
+    "tools": {
+      "python": "/Users/user/miniforge3/envs/mcstasscript_mcstas/bin/python",
+      "mcstas": "/Users/user/miniforge3/envs/mcstasscript_mcstas/bin/mcstas",
+      "mcrun": "/Users/user/miniforge3/envs/mcstasscript_mcstas/bin/mcrun",
+      "mctest": "/Users/user/miniforge3/envs/mcstasscript_mcstas/bin/mctest",
+      "mcplot": "/Users/user/miniforge3/envs/mcstasscript_mcstas/bin/mcplot",
+      "mcdisplay": "/Users/user/miniforge3/envs/mcstasscript_mcstas/bin/mcdisplay"
+    },
+    "versions": {
+      "mcrun": "3.10.0",
+      "mcstas": "mcstas code generator version 3.10.0 (git)",
+      "mctest_version_probe": "unsupported: mctest --version returns status 2 and argparse usage"
+    }
+  },
+  "capture": {
+    "instrument_source": "../tiny_scan.instr",
+    "instrument_is_not_shipped": true,
+    "instrument_sha256": "18cad4159348e443ee9aafd292d7198b5a997ce2108e45fd463def2abd034447",
+    "seed": 314159,
+    "ncount_per_point": 64,
+    "normal_capture_flags": ["--force-compile", "--seed=314159", "--ncount=64"],
+    "working_directory": "A fresh temporary directory containing a copy of tiny_scan.instr",
+    "native_outputs_only": [".sim", ".dat", ".h5"],
+    "hash_seed_comparison_not_shipped": {
+      "command": "PYTHONHASHSEED=2 mcrun --force-compile --format=McCode --seed=314159 --ncount=64 --dir=ascii_hashseed_2 tiny_scan.instr -N 3 theta=-1,1 wavelength=2,6",
+      "observed_variables": "theta wavelength spectrum_I spectrum_ERR",
+      "retained_artifacts": false
+    }
+  },
+  "source_references": [
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/optimisation.py:51-126",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/optimisation.py:282-323",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/optimisation.py:343-389",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/optimisation.py:395-411",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/optimisation.py:487-641",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/optimisation.py:644-778",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/mcrun.py:806-844",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/mcrun.py:917-932",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/mccode.py:147-216",
+    "/Users/user/miniforge3/envs/mcstasscript_mcstas/share/mcstas/tools/Python/mcrun/mccode.py:402-497"
+  ],
+  "cases": {
+    "ascii_hashseed_1": {
+      "format": "McCode",
+      "hash_seed": "1",
+      "command": "PYTHONHASHSEED=1 mcrun --force-compile --format=McCode --seed=314159 --ncount=64 --dir=ascii_hashseed_1 tiny_scan.instr -N 3 theta=-1,1 wavelength=2,6",
+      "returncode": 0,
+      "summary": {
+        "path": "mccode.dat",
+        "bytes": 504,
+        "sha256": "6fa5546b9345fe469ae4dadcc7dc44646a468478d98ef5ee1509bc36c81a0144",
+        "header": {
+          "Numpoints": "3",
+          "type": "multiarray_1d(3)",
+          "xvars": "wavelength, theta",
+          "variables": "wavelength theta spectrum_I spectrum_ERR"
+        },
+        "row_parameter_order": ["theta", "wavelength"],
+        "literal_rows": [
+          "-1 2 6.28298e-07 7.85372e-08",
+          "0 4 1.25659e-06 1.57074e-07",
+          "1 6 1.88488e-06 2.3561e-07"
+        ]
+      },
+      "root_sim": {
+        "path": "mccode.sim",
+        "bytes": 595,
+        "sha256": "565f11d74463dfa6d8ace05447e39009589f77daa8ac3010e1c61582346168c8"
+      },
+      "points": [
+        {"point_id": 0, "path": "0", "parameters": {"theta": "-1", "wavelength": "2", "category": "vanadium", "fail": "0"}, "seed": 314159, "detector": "0/spectrum.dat", "detector_shape": [4, 4], "event_count": 64},
+        {"point_id": 1, "path": "1", "parameters": {"theta": "0", "wavelength": "4", "category": "vanadium", "fail": "0"}, "seed": 315183, "detector": "1/spectrum.dat", "detector_shape": [4, 4], "event_count": 64},
+        {"point_id": 2, "path": "2", "parameters": {"theta": "1", "wavelength": "6", "category": "vanadium", "fail": "0"}, "seed": 316207, "detector": "2/spectrum.dat", "detector_shape": [4, 4], "event_count": 64}
+      ],
+      "files": [
+        {"path": "0/mccode.sim", "bytes": 1167, "sha256": "f61d4c17d3bf48a9f0099d528679db3b20c9d0fb22d05238730c58033b3eaaf7"},
+        {"path": "0/spectrum.dat", "bytes": 820, "sha256": "0e551e0dd6f726fcf820577148d37c3bc12f1ed959c6b876aba219a501ca87df"},
+        {"path": "1/mccode.sim", "bytes": 1166, "sha256": "0b5daf3e72c3c14c97c6e5b0c2a364eb53ffd39e6f5b35932656ec7f426b6aa5"},
+        {"path": "1/spectrum.dat", "bytes": 847, "sha256": "8431a91f0fd3f38c8407a81be18ba003e22043cef63302a9ea1e4d918f20d2d7"},
+        {"path": "2/mccode.sim", "bytes": 1154, "sha256": "963a77c147c91dd3cd069fb2d7688b8d35bfbd1c0225be33eee541e6195bb363"},
+        {"path": "2/spectrum.dat", "bytes": 807, "sha256": "99c1caf76366d0e6dff233440fb659371c3441d8aa32eb8dba9181b90d45c5cf"},
+        {"path": "mccode.dat", "bytes": 504, "sha256": "6fa5546b9345fe469ae4dadcc7dc44646a468478d98ef5ee1509bc36c81a0144"},
+        {"path": "mccode.sim", "bytes": 595, "sha256": "565f11d74463dfa6d8ace05447e39009589f77daa8ac3010e1c61582346168c8"}
+      ]
+    },
+    "ascii_categorical_repeated": {
+      "format": "McCode",
+      "hash_seed": null,
+      "command": "mcrun --force-compile --format=McCode --seed=314159 --ncount=64 --dir=ascii_categorical_repeated tiny_scan.instr -L theta=0,1,0 wavelength=3,5,3 category=vanadium,nickel,vanadium",
+      "returncode": 0,
+      "summary": {
+        "path": "mccode.dat",
+        "bytes": 593,
+        "sha256": "9fd35ee909bd1b1e1b2feccf8fadc5e10884429feda3c630e9976320791e0d78",
+        "header": {
+          "Numpoints": "3",
+          "type": "multiarray_1d(3)",
+          "xvars": "theta, category, wavelength",
+          "variables": "theta category wavelength spectrum_I spectrum_ERR"
+        },
+        "literal_rows": [
+          "0.0 3.0 0.0 1.2566e-06 1.57074e-07",
+          "1.0 5.0 1.0 3.76978e-06 4.71223e-07",
+          "0.0 3.0 0.0 1.25659e-06 1.57073e-07"
+        ]
+      },
+      "root_sim": {
+        "path": "mccode.sim",
+        "bytes": 734,
+        "sha256": "2eaecf3c91d5804292cbe9d424addba5bbc44ec7e32c73f1a4d009e5cee67474"
+      },
+      "points": [
+        {"point_id": 0, "path": "0", "parameters": {"theta": "0", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 314159, "detector": "0/spectrum.dat", "detector_shape": [4, 4], "event_count": 64},
+        {"point_id": 1, "path": "1", "parameters": {"theta": "1", "wavelength": "5", "category": "nickel", "fail": "0"}, "seed": 315183, "detector": "1/spectrum.dat", "detector_shape": [4, 4], "event_count": 64},
+        {"point_id": 2, "path": "2", "parameters": {"theta": "0", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 316207, "detector": "2/spectrum.dat", "detector_shape": [4, 4], "event_count": 64}
+      ],
+      "repeated_point_ids": [0, 2],
+      "files": [
+        {"path": "0/mccode.sim", "bytes": 1184, "sha256": "a13005699ad271981b3f4377ed7c8ae45e4335f6db6f175070f9bf266bc68c7a"},
+        {"path": "0/spectrum.dat", "bytes": 817, "sha256": "3c194b8bf3cbf376dd2310b48f9ff07f243b1c773110725b3cf1c5c0b8161a02"},
+        {"path": "1/mccode.sim", "bytes": 1184, "sha256": "8a8ce87c99da0b7c4e2236f3f3887c332ebe8fce9f772bba31adb29cdea9b548"},
+        {"path": "1/spectrum.dat", "bytes": 817, "sha256": "9ae5506acd7cc691b5e7d2d848b6791ed4a516045f91b71e1ae71a009642aa17"},
+        {"path": "2/mccode.sim", "bytes": 1186, "sha256": "4e7f020b590d6679bca50e81c08c046ec6635f1efa916cb1accc1080934bf43c"},
+        {"path": "2/spectrum.dat", "bytes": 819, "sha256": "0544bee6cc2b16af6c285352e6ecdc46673ece6b7c1e478ac03aa1bb8af82639"},
+        {"path": "mccode.dat", "bytes": 593, "sha256": "9fd35ee909bd1b1e1b2feccf8fadc5e10884429feda3c630e9976320791e0d78"},
+        {"path": "mccode.sim", "bytes": 734, "sha256": "2eaecf3c91d5804292cbe9d424addba5bbc44ec7e32c73f1a4d009e5cee67474"}
+      ]
+    },
+    "ascii_partial": {
+      "format": "McCode",
+      "hash_seed": null,
+      "command": "mcrun --force-compile --format=McCode --seed=314159 --ncount=64 --dir=ascii_partial tiny_scan.instr -L theta=0,1,2,3 fail=0,1,0,0",
+      "returncode": 0,
+      "child_failure_status": 23,
+      "summary": {
+        "path": "mccode.dat",
+        "bytes": 496,
+        "sha256": "f975ea3f78ab310eb31398fe9da0a96e090f391f34cdc8c655173c9e96e35e50",
+        "header": {
+          "Numpoints": "4",
+          "type": "multiarray_1d(4)",
+          "xvars": "fail, theta",
+          "variables": "fail theta spectrum_I spectrum_ERR"
+        },
+        "literal_rows": [
+          "0.0 0.0 1.2566e-06 1.57074e-07",
+          "2.0 0.0 2.51317e-06 3.14147e-07",
+          "3.0 0.0 3.14149e-06 3.92686e-07"
+        ]
+      },
+      "root_sim": {
+        "path": "mccode.sim",
+        "bytes": 597,
+        "sha256": "4d958b5c50efcebc05fdd88fa12f7d90e34d3b1aa139da4e96b97ca42eb26d81"
+      },
+      "intended_points": [
+        {"point_id": 0, "parameters": {"theta": "0", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 314159, "expected_status": "completed"},
+        {"point_id": 1, "parameters": {"theta": "1", "wavelength": "3", "category": "vanadium", "fail": "1"}, "seed": 315183, "expected_status": "failed"},
+        {"point_id": 2, "parameters": {"theta": "2", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 316207, "expected_status": "completed"},
+        {"point_id": 3, "parameters": {"theta": "3", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 317231, "expected_status": "completed"}
+      ],
+      "points": [
+        {"point_id": 0, "path": "0", "parameters": {"theta": "0", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 314159, "detector": "0/spectrum.dat", "detector_shape": [4, 4], "event_count": 64},
+        {"point_id": 1, "path": "1", "parameters": {"theta": "1", "wavelength": "3", "category": "vanadium", "fail": "1"}, "seed": 315183, "detector": null},
+        {"point_id": 2, "path": "2", "parameters": {"theta": "2", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 316207, "detector": "2/spectrum.dat", "detector_shape": [4, 4], "event_count": 64},
+        {"point_id": 3, "path": "3", "parameters": {"theta": "3", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 317231, "detector": "3/spectrum.dat", "detector_shape": [4, 4], "event_count": 64}
+      ],
+      "files": [
+        {"path": "0/mccode.sim", "bytes": 1145, "sha256": "e4e47aee8bb84251acecf6800986b3336e8efef4a8c58c51c5b5e3130cd842f5"},
+        {"path": "0/spectrum.dat", "bytes": 804, "sha256": "cb6d4a5b401b1f981ba9beeb41b3be19d8b3c303a651064757237a3a3bac4fc1"},
+        {"path": "1/mccode.sim", "bytes": 669, "sha256": "0819ba80617b00509332185b163c1077fc10795f2a2c001af35f3b8953bb416f"},
+        {"path": "2/mccode.sim", "bytes": 1147, "sha256": "0e4efe59d1870fc45d8fca3d252eb74ef4c25823c6670dd328de658c012090c0"},
+        {"path": "2/spectrum.dat", "bytes": 806, "sha256": "9e982f38ad2220fa092b3ec5702c8f526b6fc25f8f6a8995b46065c54ba9be23"},
+        {"path": "3/mccode.sim", "bytes": 1147, "sha256": "cd07dd2b4bc1bcdea4c64a70b04e1e6c84b4be91f0a2e90688977ea82ef0e1c5"},
+        {"path": "3/spectrum.dat", "bytes": 806, "sha256": "60bab1e19b05210bedce310419bf9850c56b12d3d938ea6db8247c9158606e27"},
+        {"path": "mccode.dat", "bytes": 496, "sha256": "f975ea3f78ab310eb31398fe9da0a96e090f391f34cdc8c655173c9e96e35e50"},
+        {"path": "mccode.sim", "bytes": 597, "sha256": "4d958b5c50efcebc05fdd88fa12f7d90e34d3b1aa139da4e96b97ca42eb26d81"}
+      ]
+    },
+    "nexus_partial": {
+      "format": "NeXus",
+      "hash_seed": null,
+      "command": "mcrun --force-compile --format=NeXus --seed=314159 --ncount=64 --dir=nexus_partial tiny_scan.instr -L theta=0,1,2,3 fail=0,1,0,0",
+      "returncode": 0,
+      "child_failure_status": 23,
+      "root_sim_exists": false,
+      "summary": {
+        "path": "mccode.dat",
+        "bytes": 496,
+        "sha256": "f975ea3f78ab310eb31398fe9da0a96e090f391f34cdc8c655173c9e96e35e50",
+        "header": {
+          "Numpoints": "4",
+          "type": "multiarray_1d(4)",
+          "xvars": "fail, theta",
+          "variables": "fail theta spectrum_I spectrum_ERR"
+        },
+        "literal_rows": [
+          "0.0 0.0 1.2566e-06 1.57074e-07",
+          "2.0 0.0 2.51317e-06 3.14147e-07",
+          "3.0 0.0 3.14149e-06 3.92686e-07"
+        ]
+        },
+      "intended_points": [
+        {"point_id": 0, "parameters": {"theta": "0", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 314159, "expected_status": "completed"},
+        {"point_id": 1, "parameters": {"theta": "1", "wavelength": "3", "category": "vanadium", "fail": "1"}, "seed": 315183, "expected_status": "failed"},
+        {"point_id": 2, "parameters": {"theta": "2", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 316207, "expected_status": "completed"},
+        {"point_id": 3, "parameters": {"theta": "3", "wavelength": "3", "category": "vanadium", "fail": "0"}, "seed": 317231, "expected_status": "completed"}
+      ],
+      "entries": [
+        {"entry": "entry1", "parameters": {"category": "vanadium", "fail": "0", "theta": "0", "wavelength": "3"}, "seed": "314159", "complete": true, "detector_shapes": {"Wavelength__AA_": [4], "data": [4], "errors": [4], "ncount": [4]}, "event_count": 64},
+        {"entry": "entry2", "parameters": {"category": "vanadium", "fail": "0", "theta": "2", "wavelength": "3"}, "seed": "316207", "complete": true, "detector_shapes": {"Wavelength__AA_": [4], "data": [4], "errors": [4], "ncount": [4]}, "event_count": 64},
+        {"entry": "entry3", "parameters": {"category": "vanadium", "fail": "0", "theta": "3", "wavelength": "3"}, "seed": "317231", "complete": true, "detector_shapes": {"Wavelength__AA_": [4], "data": [4], "errors": [4], "ncount": [4]}, "event_count": 64}
+      ],
+      "failed_point": {"point_id": 1, "parameters": {"theta": "1", "wavelength": "3", "category": "vanadium", "fail": "1"}, "native_entry": null},
+      "successful_point_ids": [0, 2, 3],
+      "entry_names_are_not_external_point_ids": true,
+      "files": [
+        {"path": "mccode.dat", "bytes": 496, "sha256": "f975ea3f78ab310eb31398fe9da0a96e090f391f34cdc8c655173c9e96e35e50"},
+        {"path": "mccode.h5", "bytes": 250336, "sha256": "517282a5fd42abd3b497fbe097a90ee10f3a52632f4d792401df0ad3d6f06126"}
+      ],
+      "hdf5_root": {"HDF5_Version": "1.14.6", "NeXus_version": "4.4.2"}
+    },
+    "nexus_parallel": {
+      "format": "NeXus",
+      "hash_seed": null,
+      "command": "mcrun --force-compile --format=NeXus --seed=314159 --ncount=64 --dir=nexus_parallel tiny_scan.instr --scan_split=2 -N 2 theta=-1,1",
+      "returncode": 0,
+      "merged": true,
+      "root_sim_exists": false,
+      "per_point_h5_files": false,
+      "summary": {
+        "path": "mccode.dat",
+        "bytes": 414,
+        "sha256": "3068231c20f6586077f4fb42d5d37c58fded1bdadee381d8a6e6bb8bce8f0eb5",
+        "header": {
+          "Numpoints": "2",
+          "type": "multiarray_1d(2)",
+          "xvars": "theta",
+          "variables": "theta spectrum_I spectrum_ERR"
+        },
+        "literal_rows": [
+          "-1.0 6.28298e-07 7.85372e-08",
+          "1.0 1.88489e-06 2.35611e-07"
+        ]
+      },
+      "entries": [
+        {"entry": "entry1", "parameters": {"category": "vanadium", "fail": "0", "theta": "-1", "wavelength": "3"}, "seed": "314159", "complete": true, "detector_shapes": {"Wavelength__AA_": [4], "data": [4], "errors": [4], "ncount": [4]}, "event_count": 64},
+        {"entry": "entry2", "parameters": {"category": "vanadium", "fail": "0", "theta": "1", "wavelength": "3"}, "seed": "315183", "complete": true, "detector_shapes": {"Wavelength__AA_": [4], "data": [4], "errors": [4], "ncount": [4]}, "event_count": 64}
+      ],
+      "files": [
+        {"path": "mccode.dat", "bytes": 414, "sha256": "3068231c20f6586077f4fb42d5d37c58fded1bdadee381d8a6e6bb8bce8f0eb5"},
+        {"path": "mccode.h5", "bytes": 158552, "sha256": "9199794c0fb968ec52005ff98c6a63f0200ff4c35f777a9903c855bd4e2b26e1"}
+      ],
+      "hdf5_root": {"HDF5_Version": "1.14.6", "NeXus_version": "4.4.2"}
+    }
+  }
+}

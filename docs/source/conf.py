@@ -39,7 +39,18 @@ templates_path = ['_templates']
 
 master_doc = 'index'
 
-exclude_patterns = []
+# Notebook examples can leave simulation output and WebGL viewer dependencies
+# beneath the source tree. Git ignore rules do not affect Sphinx discovery.
+exclude_patterns = [
+    '**/.ipynb_checkpoints',
+    '**/node_modules',
+    '**/*_[0-9]*/**',
+    '**/*_db',
+    '**/data_folder',
+    '**/run_folder',
+    '**/instr_name',
+    '**/*.dSYM',
+]
 
 # myst_nb: don't execute notebooks during build (they're pre-rendered .ipynb)
 nb_execution_mode = 'off'

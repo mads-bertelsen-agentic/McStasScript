@@ -381,6 +381,13 @@ def load_results(data_folder_name):
     if not os.path.isdir(data_folder_name):
         raise NameError("Given data directory does not exist.")
 
+    from mcstasscript.data.scan_ascii import is_ascii_scan_directory
+    from mcstasscript.data.scan_nexus import is_nexus_scan_directory
+
+    if is_ascii_scan_directory(data_folder_name) or is_nexus_scan_directory(data_folder_name):
+        raise RuntimeError("Recognized native scan output; use load_scan() instead of "
+                           "the single-run loader.")
+
     # Find all data files in generated folder
     files_in_folder = os.listdir(data_folder_name)
 
@@ -538,28 +545,29 @@ def load_metadata_text(data_folder_name):
     return metadata_list
 
 
-def load_metadata_nexus(file_object):
+def load_metadata_nexus(file_object, entry="entry1"):
     instrument_parameters = {}
 
     f = file_object
+    entry = entry.strip("/")
 
-    if "entry1" not in list(f.keys()):
+    if entry not in f:
         raise ValueError("h5 file not formatted as expected.")
 
-    if "data" not in list(f["entry1"].keys()):
+    if "data" not in list(f[entry].keys()):
         raise ValueError("h5 file not formatted as expected.")
 
-    if "simulation" not in list(f["entry1"].keys()):
+    if "simulation" not in list(f[entry].keys()):
         raise ValueError("h5 file not formatted as expected.")
 
-    if "Param" not in list(f["entry1"]["simulation"].keys()):
+    if "Param" not in list(f[entry]["simulation"].keys()):
         raise ValueError("h5 file not formatted as expected.")
 
     # Common information
 
     # Instrument parameters
     instrument_parameters = {}
-    loaded_par_dict = f["entry1"]["simulation"]["Param"].attrs
+    loaded_par_dict = f[entry]["simulation"]["Param"].attrs
     for par_name in loaded_par_dict:
         if par_name == "NX_class":
             continue
@@ -574,7 +582,7 @@ def load_metadata_nexus(file_object):
     metadata_list = []
 
     # For each entry in data, make a metadata object
-    for key in f["entry1"]["data"].keys():
+    for key in f[entry]["data"].keys():
 
         # Make the metadata object and add instrument parameters
         metadata = McStasMetaData()
@@ -584,7 +592,7 @@ def load_metadata_nexus(file_object):
         metadata.add_info("NeXus_field", key)
 
         # Add all the read info from attribute section
-        info = dict(f["entry1"]["data"][key].attrs)
+        info = dict(f[entry]["data"][key].attrs)
         info = decode_dict(info)
         for name, value in info.items():
             if isinstance(value, bytes):
@@ -624,7 +632,7 @@ def load_monitor(metadata, data_folder_name):
         return load_monitor_text(metadata, data_folder_name)
 
 
-def load_monitor_nexus(metadata, file_object):
+def load_monitor_nexus(metadata, file_object, entry="entry1"):
     """
     Function that loads data given metadata and name of data folder
     This version is for a nexus file
@@ -641,22 +649,23 @@ def load_monitor_nexus(metadata, file_object):
     """
 
     f = file_object
+    entry = entry.strip("/")
 
-    if "entry1" not in list(f.keys()):
+    if entry not in f:
         raise ValueError("h5 file not formatted as expected.")
 
-    if "data" not in list(f["entry1"].keys()):
+    if "data" not in list(f[entry].keys()):
         raise ValueError("h5 file not formatted as expected.")
 
-    if "simulation" not in list(f["entry1"].keys()):
+    if "simulation" not in list(f[entry].keys()):
         raise ValueError("h5 file not formatted as expected.")
 
-    if "Param" not in list(f["entry1"]["simulation"].keys()):
+    if "Param" not in list(f[entry]["simulation"].keys()):
         raise ValueError("h5 file not formatted as expected.")
 
     NeXus_field = metadata.info["NeXus_field"]
 
-    available_fields = f["entry1"]["data"][NeXus_field].keys()
+    available_fields = f[entry]["data"][NeXus_field].keys()
     if not metadata.dimension == 0 and "events" not in available_fields:
         if "data" not in available_fields:
             raise ValueError("NeXus reading: data not found! \n"
@@ -672,18 +681,18 @@ def load_monitor_nexus(metadata, file_object):
 
     # Need to check if it is binned data or event data
     if "events" in available_fields:
-        Events = np.array(f["entry1"]["data"][NeXus_field]["events"])
+        Events = np.array(f[entry]["data"][NeXus_field]["events"])
         return McStasDataEvent(metadata, Events)
 
     # Split data into intensity, error and ncount
     if type(metadata.dimension) == int and metadata.dimension == 0:
 
-        if "data" in f["entry1"]["data"][NeXus_field].keys():
+        if "data" in f[entry]["data"][NeXus_field].keys():
             raise ValueError("Found array data in 0D dataset?")
 
         values = None
-        if "values" in f["entry1"]["data"][NeXus_field].keys():
-            values = np.array(f["entry1"]["data"][NeXus_field]["values"])
+        if "values" in f[entry]["data"][NeXus_field].keys():
+            values = np.array(f[entry]["data"][NeXus_field]["values"])
 
         if metadata.total_I is None:
             if values is not None:
@@ -720,28 +729,28 @@ def load_monitor_nexus(metadata, file_object):
         # All special characters are substituted with _ in McStas NeXus file
         x_field = re.sub(r'[^a-zA-Z]', "_", original_xlabel)
 
-        if x_field not in f["entry1"]["data"][NeXus_field].keys():
+        if x_field not in f[entry]["data"][NeXus_field].keys():
             error_text = ("Didn't find xaxis in NeXus file. \n"
                           + "Expected this field for x axis: "
                           + str(x_field) + "\n"
                           + "Existing fields: "
-                          + str(f["entry1"]["data"][NeXus_field].keys()))
+                          + str(f[entry]["data"][NeXus_field].keys()))
 
             raise ValueError(error_text)
 
-        xaxis = np.array(f["entry1"]["data"][NeXus_field][x_field])
-        Intensity = np.array(f["entry1"]["data"][NeXus_field]["data"])
-        Error = np.array(f["entry1"]["data"][NeXus_field]["errors"])
-        Ncount = np.array(f["entry1"]["data"][NeXus_field]["ncount"])
+        xaxis = np.array(f[entry]["data"][NeXus_field][x_field])
+        Intensity = np.array(f[entry]["data"][NeXus_field]["data"])
+        Error = np.array(f[entry]["data"][NeXus_field]["errors"])
+        Ncount = np.array(f[entry]["data"][NeXus_field]["ncount"])
 
         # The data is saved as a McStasDataBinned object
         return McStasDataBinned(metadata, Intensity, Error, Ncount, xaxis=xaxis)
 
     elif len(metadata.dimension) == 2:
         xaxis = []  # Assume evenly binned in 2d
-        Intensity = np.array(f["entry1"]["data"][NeXus_field]["data"]).T
-        Error = np.array(f["entry1"]["data"][NeXus_field]["errors"]).T
-        Ncount = np.array(f["entry1"]["data"][NeXus_field]["ncount"]).T
+        Intensity = np.array(f[entry]["data"][NeXus_field]["data"]).T
+        Error = np.array(f[entry]["data"][NeXus_field]["errors"]).T
+        Ncount = np.array(f[entry]["data"][NeXus_field]["ncount"]).T
 
         # The data is saved as a McStasDataBinned object
         return McStasDataBinned(metadata, Intensity, Error, Ncount, xaxis=xaxis)
@@ -770,7 +779,7 @@ def load_monitor_text(metadata, data_folder_name):
     """
     # Load data with numpy
     filename = os.path.join(data_folder_name, metadata.filename.rstrip())
-    data = np.loadtxt(filename)
+    data = np.loadtxt(filename, ndmin=0 if metadata.dimension == 0 else 2)
 
     # Split data into intensity, error and ncount
     if type(metadata.dimension) == int and metadata.dimension == 0:
