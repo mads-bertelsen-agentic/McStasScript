@@ -110,12 +110,20 @@ def load_scan(path):
     """Load an ASCII scan directory/summary or combined/per-point NeXus scan.
 
     Returns a :class:`mcstasscript.ScanResult` with detached metadata and lazy
-    point data. Does not require an instrument or invoke McStas. Original plan
-    IDs, settings, and execution outcomes remain unknown unless the files supply
-    them; see ``scan.metadata['diagnostics']`` for native format limitations.
+    point data. Does not require an instrument or invoke McStas.
+    Scan directories containing ``scan_manifest.json`` recover their requested
+    plan and execution evidence. Manifest-free native output retains only the
+    evidence in its files; see ``scan.metadata['diagnostics']`` for limitations.
     """
-    from mcstasscript.data.scan_ascii import load_scan as read_scan
+    from mcstasscript.data.scan_persistence import MANIFEST_FILENAME
+    from mcstasscript.data.scan_persistence import load_manifest_scan
 
+    path_value = os.fspath(path)
+    candidate = os.path.join(path_value, MANIFEST_FILENAME) if os.path.isdir(path) else path_value
+    if (os.path.basename(path_value) == MANIFEST_FILENAME or
+            (os.path.isdir(path_value) and os.path.isfile(candidate))):
+        return load_manifest_scan(candidate)
+    from mcstasscript.data.scan_ascii import load_scan as read_scan
     return read_scan(path)
 
 def load_metadata(data_folder_name):

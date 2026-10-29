@@ -1,14 +1,17 @@
 Scan Result Model
 =================
 
-This page describes the execution-free scan-result model. Native ASCII and
-NeXus output can be loaded without starting McStas, running a subprocess, or
-requiring an instrument object. Loading observes the files that exist; it does
-not reconstruct an execution plan.
-No new dependencies are required. Scan execution and overview plotting are
-separate: overview plotting reads only the scalar summaries already present in
-the loaded result.
+This page describes the scan-result model. Native ASCII and NeXus output can
+be loaded without starting McStas, running a subprocess, or requiring an
+instrument object. Loading native output observes the files that exist; it
+does not reconstruct an execution plan. A result produced by
+``instrument.scan`` is different: ``load_scan`` detects its manifest and
+reconciles native observations with the requested plan. No new dependencies
+are required. Overview plotting reads only the scalar summaries already
+present in the loaded result.
 
+For a managed execution example that writes an instrument, runs
+``instrument.scan``, and reloads its manifest, see :doc:`scan_execution`.
 For runnable examples that write an instrument, run native ``!mcrun`` scans,
 and read their output, see :doc:`../tutorial/McStasScript_tutorial_7_native_scans`.
 For execution-free summary analysis and plotting, see

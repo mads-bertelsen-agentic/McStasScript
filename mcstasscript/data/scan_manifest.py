@@ -21,6 +21,7 @@ from .scan import ScanSource
 
 SCHEMA = "mcstasscript.scan_manifest"
 VERSION = 1
+MANIFEST_FILENAME = "scan_manifest.json"
 POINT_STATUSES = ("pending", "unknown", "running", "succeeded", "failed",
                   "interrupted", "skipped")
 DATA_STATUSES = ("unknown", "available", "partial", "missing", "unreadable")
@@ -477,11 +478,16 @@ class ScanManifest:
                      set(raw_record["seed"]) != _SEED_KEYS)):
                 raise ValueError("Invalid seed record for {!r}.".format(key))
             point_id = _record_id(plan, key)
+            serialized_source = _source_from_dict(raw_record["source"])
             manifest.record_point(point_id, source=manifest._source_for_root(raw_record["source"]),
                                   status=raw_record["status"],
                                   data_status=raw_record["data_status"],
                                   seed=raw_record["seed"],
                                   diagnostics=raw_record["diagnostics"])
+            # Preserve the serialized external/relative decision verbatim.
+            # An external absolute path may happen to lie below output_root.
+            if serialized_source is not None:
+                manifest._records[point_id]["source"] = deepcopy(serialized_source)
         if value["execution"] != manifest.execution:
             raise ValueError("Manifest execution aggregate does not match point records.")
         return manifest
@@ -500,5 +506,5 @@ class ScanManifest:
         return ScanSource(path, source["format"], source["entry"])
 
 
-__all__ = ["ScanManifest", "ScanSource", "SCHEMA", "VERSION", "POINT_STATUSES",
-           "DATA_STATUSES"]
+__all__ = ["ScanManifest", "ScanSource", "SCHEMA", "VERSION", "MANIFEST_FILENAME",
+           "POINT_STATUSES", "DATA_STATUSES"]

@@ -4,6 +4,7 @@ from ._version import __version__
 from .data.collection import McStasDataCollection
 from .data.scan import ScanPoint, ScanResult
 from .data.scan_plan import ScanPlan
+from .helper.scan_execution import ScanExecutionError
 
 from .interface.instr import McStas_instr
 from .interface.instr import McXtrace_instr

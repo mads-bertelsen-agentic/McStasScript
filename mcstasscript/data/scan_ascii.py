@@ -66,13 +66,29 @@ def _parameter_types(declaration):
     return dict(re.findall(r"(\w+)\s*\(\s*([^()]+)\s*\)", declaration))
 
 
+def _unescape_native_string(value):
+    """Decode the quote and backslash escaping used by native McCode output."""
+    result = []
+    index = 0
+    while index < len(value):
+        if value[index] == "\\" and index + 1 < len(value) and value[index + 1] in '\\"':
+            result.append(value[index + 1])
+            index += 2
+        else:
+            result.append(value[index])
+            index += 1
+    return "".join(result)
+
+
 def _parse_value(value, declared_type=None):
     value = str(value).strip()
-    quoted = len(value) >= 2 and value[0] == value[-1] and value[0] in "'\""
+    # Double quotes are the native wrapper used by legacy output; apostrophes
+    # can be literal string data in current native metadata.
+    quoted = len(value) >= 2 and value[0] == value[-1] == '"'
     if quoted:
         value = value[1:-1]
     if declared_type in ("string", "char*") or (quoted and declared_type is None):
-        return value
+        return _unescape_native_string(value)
     try:
         if declared_type == "int":
             return int(value)
@@ -168,7 +184,8 @@ def _point_records(point_path):
         inventory[monitor] = metadata
         summaries.append(_summary_from_metadata(metadata, path, monitor))
     return ScanPoint(
-        int(point_path.name), parameters, ScanSource(point_path), summaries=summaries,
+        int(point_path.name) if point_path.name.isdecimal() else 0,
+        parameters, ScanSource(point_path), summaries=summaries,
         metadata={"native": simulation, "seed": _parse_value(simulation["Seed"], "int")
                   if "Seed" in simulation else None, "parameter_types": types},
         loader=partial(_load_point_data, inventory=inventory),

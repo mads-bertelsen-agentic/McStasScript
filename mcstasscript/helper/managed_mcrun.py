@@ -383,8 +383,11 @@ def load_results(data_folder_name):
 
     from mcstasscript.data.scan_ascii import is_ascii_scan_directory
     from mcstasscript.data.scan_nexus import is_nexus_scan_directory
+    from mcstasscript.data.scan_manifest import MANIFEST_FILENAME
 
-    if is_ascii_scan_directory(data_folder_name) or is_nexus_scan_directory(data_folder_name):
+    if (os.path.isfile(os.path.join(data_folder_name, MANIFEST_FILENAME))
+            or is_ascii_scan_directory(data_folder_name)
+            or is_nexus_scan_directory(data_folder_name)):
         raise RuntimeError("Recognized native scan output; use load_scan() instead of "
                            "the single-run loader.")
 

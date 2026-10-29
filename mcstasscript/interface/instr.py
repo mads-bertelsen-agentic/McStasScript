@@ -520,6 +520,11 @@ class McCode_instr(BaseCalculator):
         """Validate a scan without changing or executing this instrument."""
         return _scan_preflight(self, plan, settings=settings)
 
+    def scan(self, plan, *, on_error="raise"):
+        """Scan using the configured settings, without mutating this instrument."""
+        from mcstasscript.helper.scan_execution import execute_scan
+        return execute_scan(self, plan, on_error=on_error)
+
     def init_parameters(self):
         """
         Create empty ParameterContainer for new instrument

@@ -6,11 +6,13 @@ This page documents the execution-free scan planning API. A
 expanding a Cartesian product. ``scan_preflight`` checks that plan against an
 instrument without compiling, running, or changing it. A
 ``ScanManifest`` records the plan and sparse observations as versioned JSON
-metadata.
+metadata. To execute a verified native scan from a plan, use
+:meth:`~mcstasscript.McStas_instr.scan`; see :doc:`scan_execution` for its
+isolated output and result-loading contract.
 
-These objects do not write scan output files. In particular, ``load_scan``
-does not consume manifests in this phase; manifest-aware loading is a later
-feature.
+Planning and preflight do not write scan output files. ``load_scan`` consumes a
+manifest when one is produced by ``instrument.scan``; direct native output
+without a manifest continues to use the execution-free native readers.
 
 Creating A Plan
 ---------------
@@ -179,9 +181,9 @@ instrument metadata, validates copies of parameters, verifies the configured
 runner and paths, and returns a report. It does not call
 ``write_full_instrument``, ``settings`` or ``set_parameters``, compile, launch
 a subprocess, execute a runner, create an output directory, or increment an
-output-folder name. Runner verification checks the configured executable path
-and uses ``shutil.which`` when the path is empty or otherwise configured; it
-does not execute the resolved command.
+output-folder name. Runner verification uses ``shutil.which`` within the
+configured executable directory and anchors the resolved command to an absolute
+path. It does not execute that command.
 
 The report exposes:
 
@@ -242,8 +244,10 @@ override keys. ``ncount`` must be a positive integer;
 is ``None``, ``"auto"``, or a positive integer. Boolean options must be
 booleans. Nonempty ``custom_flags`` are rejected because they cannot be safely
 preflighted. ``executable`` must be the native runner name (``mcrun`` for
-McStas or ``mxrun`` for McXtrace). ``executable_path`` must be an existing
-directory or an empty string for ``PATH``, and the runner must be found there.
+McStas or ``mxrun`` for McXtrace). ``executable_path`` must be a nonempty existing
+directory, and the runner must be found there. A relative directory is resolved
+against the current working directory; an empty, ``PATH``-only setting is not
+supported by the scan API.
 An ``executable``, ``executable_path``, or ``package_path`` override is
 accepted only when it is identical to the corresponding cached instrument
 runner value; it cannot reconfigure the runner during preflight.
@@ -419,7 +423,7 @@ Without ``root``, relative sources resolve against the manifest's stored
 not require the target file to exist. A point without a source resolves to
 ``None``; an unrecorded point raises ``KeyError``.
 
-The manifest API serializes metadata only. It does not automatically write a
-manifest, write simulation output, load detector data, or make ``load_scan``
-reconstruct a requested plan. The file and result-loading behavior remains
-separate from this execution-free planning API.
+The manifest API serializes metadata only. It does not automatically launch a
+simulation or load detector data. ``instrument.scan`` is the separate execution
+owner that writes a manifest and native output; its result-loading behavior is
+described in :doc:`scan_execution` and :doc:`scan_results`.

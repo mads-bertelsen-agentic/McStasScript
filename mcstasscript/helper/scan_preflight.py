@@ -270,7 +270,7 @@ def _validate_runner(instrument, overrides, effective, errors):
     configured_path = effective.get("executable_path", "")
     resolved = None
     if configured_path is None:
-        errors.append("executable_path must be an existing directory or empty for PATH.")
+        errors.append("executable_path must be an existing directory.")
         valid = False
     else:
         try:
@@ -287,6 +287,8 @@ def _validate_runner(instrument, overrides, effective, errors):
                     errors.append("Configured runner executable was not found: {}."
                                   .format(executable))
                     valid = False
+                else:
+                    resolved = os.path.abspath(resolved)
         except (TypeError, ValueError, OSError) as error:
             errors.append("Invalid executable_path: {}.".format(error))
             valid = False

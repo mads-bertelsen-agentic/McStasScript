@@ -7,7 +7,7 @@ import numpy as np
 
 from mcstasscript import load_scan
 from mcstasscript.data.scan import ScanDataError
-from mcstasscript.data.scan_ascii import ScanFormatError
+from mcstasscript.data.scan_ascii import ScanFormatError, _parse_value, _point_records
 
 
 FIXTURES = Path(__file__).resolve().parent / "scan_fixtures"
@@ -51,6 +51,40 @@ def write_point(path, declarations, parameters, monitors, seed=1):
 
 
 class TestAsciiScanEdgeCases(unittest.TestCase):
+    def test_native_string_apostrophes_survive_shared_ascii_and_nexus_parser(self):
+        self.assertEqual(_parse_value("'single'", "string"), "'single'")
+        self.assertEqual(_parse_value(r'\"single\"', "string"), '"single"')
+        self.assertEqual(_parse_value('"two words"', "string"), "two words")
+
+        with TemporaryDirectory() as directory:
+            point_path = Path(directory) / "0"
+            write_point(
+                point_path,
+                [("category", "string")],
+                [("category", "'single'")],
+                [{"component": "spectrum", "filename": "spectrum.dat",
+                  "bins": 1, "values": "1 0 1", "data": "0 1 0 1\n"}],
+            )
+
+            point = _point_records(point_path)
+
+        self.assertEqual(point.parameters["category"], "'single'")
+
+    def test_native_string_parameters_unescape_quotes_and_backslashes(self):
+        with TemporaryDirectory() as directory:
+            point_path = Path(directory) / "0"
+            write_point(
+                point_path,
+                [("category", "string")],
+                [("category", r'quote\"mark\\slash')],
+                [{"component": "spectrum", "filename": "spectrum.dat",
+                  "bins": 1, "values": "1 0 1", "data": "0 1 0 1\n"}],
+            )
+
+            point = _point_records(point_path)
+
+        self.assertEqual(point.parameters["category"], r'quote"mark\slash')
+
     def test_numbered_points_load_without_summary(self):
         with TemporaryDirectory() as directory:
             root = copy_fixture("ascii_1d", Path(directory))

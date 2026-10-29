@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -55,6 +56,17 @@ class TestScanPlan(unittest.TestCase):
 
 
 class TestScanPreflight(unittest.TestCase):
+    def test_relative_runner_path_is_anchored_for_command_construction(self):
+        parameter = provide_parameter("double", "x", value=1.0)
+        with tempfile.TemporaryDirectory() as directory:
+            instrument = fake_instrument([parameter], Path(directory) / "new")
+            runner_dir = instrument._run_settings["executable_path"]
+            instrument._run_settings["executable_path"] = os.path.relpath(runner_dir)
+            report = scan_preflight(instrument, ScanPlan.points([{"x": 1.0}]))
+            self.assertTrue(report.valid, report.errors)
+            self.assertEqual(report.tool["path_evidence"]["resolved_executable"],
+                             str(Path(runner_dir) / "mcrun"))
+
     def test_plan_input_is_strict(self):
         parameter = provide_parameter("double", "x", value=1.0)
         with tempfile.TemporaryDirectory() as directory:
