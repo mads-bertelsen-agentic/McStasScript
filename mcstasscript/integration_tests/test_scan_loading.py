@@ -9,6 +9,9 @@ import unittest
 from unittest.mock import patch
 
 import h5py
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 
 from mcstasscript import McStasDataCollection, load_scan
@@ -82,6 +85,13 @@ class TestNativeScanLoading(unittest.TestCase):
         self.assertEqual(len(monitor.total_I), 3)
         self.assertTrue(np.all(np.isfinite(monitor.total_I)))
         self.assertTrue(np.all(monitor.total_I > 0))
+        # Overview plotting must work before any full detector arrays are loaded.
+        if not any(point.is_loaded for point in scan.points):
+            with patch.object(type(scan.points[0]), "data", property(
+                    lambda point: self.fail("Overview loaded detector arrays"))):
+                figure, axes = scan.plot_overview("spectrum", x="theta", show=False)
+            np.testing.assert_allclose(axes.lines[0].get_ydata(), monitor.total_I)
+            plt.close(figure)
         for point, total in zip(scan.points, monitor.total_I):
             self.assertIn(monitor.monitor, point.summaries)
             self.assertAlmostEqual(point.summaries[monitor.monitor].total_I, total)

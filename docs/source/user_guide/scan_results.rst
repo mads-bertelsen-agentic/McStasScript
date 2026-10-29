@@ -6,10 +6,13 @@ NeXus output can be loaded without starting McStas, running a subprocess, or
 requiring an instrument object. Loading observes the files that exist; it does
 not reconstruct an execution plan.
 No new dependencies are required. Scan execution and overview plotting are
-separate, later features.
+separate: overview plotting reads only the scalar summaries already present in
+the loaded result.
 
 For runnable examples that write an instrument, run native ``!mcrun`` scans,
 and read their output, see :doc:`../tutorial/McStasScript_tutorial_7_native_scans`.
+For execution-free summary analysis and plotting, see
+:doc:`../tutorial/McStasScript_tutorial_8_scan_analysis`.
 
 Loading Native Scans
 --------------------
@@ -129,6 +132,85 @@ unreadable point raises ``ScanDataError`` with the point and source context;
 expected errors are not silently retried. ``point.clear_cache()`` explicitly
 permits another load without discarding summaries or changing execution status.
 Summary access and monitor selection do not trigger array loading.
+
+Overview Plotting
+-----------------
+
+``ScanResult.plot_overview`` plots scalar monitor totals without loading any
+detector arrays or starting a McStas/McXtrace toolchain. It returns the
+``(figure, axes)`` pair used for the plot:
+
+.. code-block:: python
+
+   figure, axes = scan.plot_overview(
+       monitor="spectrum", value="total_I", x="theta", show=False)
+
+The complete signature is:
+
+.. code-block:: python
+
+   ScanResult.plot_overview(
+       monitor=None, value="total_I", x=None, y=None, ax=None, *,
+       component=None, filename=None, kind="auto", where=None,
+       show=True, **kwargs)
+
+``monitor`` selects one stable monitor identity, either by its component name
+or by an exact monitor identity. ``component`` and ``filename`` are explicit
+monitor selectors when the identity needs to be disambiguated. In this API,
+``filename`` means the monitor's native output filename; it is not a path for
+saving a figure. Do not pass both ``monitor`` and an explicit selector.
+``value`` is one of ``total_I``, ``total_E``, or ``total_N``.
+The selected identity is resolved against the existing dataset once for the
+whole scan; a missing instance at one point does not fall back to another
+monitor.
+
+The plot is based on the existing ``ScanResult.points`` collection. It keeps
+the canonical observed point order and repeated observations; it does not sort
+coordinates into, or infer, a requested scan plan.
+
+* For a one-dimensional numeric coordinate, including irregular spacing,
+  ``kind="auto"`` uses a line in canonical point order. ``total_I`` lines use
+  error bars from the source ``total_E`` values when those errors are finite
+  and nonnegative.
+* A missing error is different from a zero error. A zero is a valid observed
+  error bar; a missing, non-finite, or negative ``total_E`` is omitted.
+* Repeated numeric coordinates use a scatter plot so every observation stays
+  visible. Categorical coordinates also use scatter and retain their labels
+  and repetitions.
+* With both ``x`` and ``y`` selected, ``kind="auto"`` uses a colored scatter
+  plot. It does not infer a heatmap from coordinates that happen to resemble a
+  grid.
+* ``kind="heatmap"`` requires explicit numeric ``x`` and ``y`` coordinates.
+  Every selected coordinate must be present, numeric, and finite; missing,
+  nonnumeric, or non-finite coordinates are rejected rather than silently
+  skipped. It rejects duplicate observed coordinate pairs, and masks both
+  unobserved combinations and observations with missing intensity. It never
+  fills cells from an inferred requested plan.
+
+When ``x`` is omitted, it is chosen automatically only when exactly one
+parameter varies in the selected points. If no parameter varies,
+the special ``point_index`` coordinate is used. If multiple parameters vary,
+select ``x`` explicitly or use ``x="point_index"``. An x-only plot with two
+varying parameters is an ordered trajectory/projection of the observations:
+the other coordinate is not held fixed, and repeated x values are preserved
+as separate observations and never averaged. Use ``y`` for a two-dimensional
+view or ``where`` for an intended grid slice. More than two varying
+parameters require a ``where`` slice or ``point_index``. ``y`` must be
+selected explicitly for a heatmap. The literal string ``"point_index"`` is
+special only when no real scan parameter has that name; an actual parameter
+named ``point_index`` takes precedence. Otherwise the special coordinate is
+the stable zero-based position in ``ScanResult.points``.
+
+``where`` is an exact parameter mapping, for example
+``where={"wavelength": 4.0}``. Only points whose stored parameter values match
+all mapping entries are selected; unknown parameters and empty slices are
+errors. It does not mutate the scan or create missing points.
+
+``show=True`` calls ``matplotlib.pyplot.show(block=False)`` after creating the
+plot. Use ``show=False`` in scripts and notebooks when display is controlled by
+the surrounding application. Matplotlib keyword arguments in ``**kwargs`` are
+passed to the selected line, scatter, or heatmap artist; error bars are
+derived from ``total_E`` and are not caller-supplied data.
 
 Fixture-Version Scope
 ---------------------

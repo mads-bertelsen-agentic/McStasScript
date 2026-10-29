@@ -372,6 +372,24 @@ class ScanResult:
             raise ValueError("Ambiguous scan monitor; use explicit component/filename filters.")
         return ScanMonitorView(self, matches[0])
 
+    def plot_overview(self, monitor=None, value="total_I", x=None, y=None, ax=None, *,
+                      component=None, filename=None, kind="auto", where=None,
+                      show=True, **kwargs):
+        """Plot scalar scan observations without loading monitor arrays.
+
+        The implementation is imported lazily so importing scan records does not
+        require matplotlib.  All monitor selectors are forwarded to :meth:`dataset`;
+        scalar validity remains owned by :class:`ScanMonitorView`.  Explicit
+        ``x='point_index'`` selects a real parameter of that name when present;
+        otherwise it selects the source-order positional index.  An automatic
+        point-index fallback always uses the positional index, even if a real
+        parameter has that name.
+        """
+        from .scan_plotting import plot_overview
+        return plot_overview(self, monitor=monitor, value=value, x=x, y=y, ax=ax,
+                             component=component, filename=filename, kind=kind,
+                             where=where, show=show, **kwargs)
+
 
 class ScanMonitorView:
     """Point-aligned scalar monitor observations, without loading detector arrays."""
