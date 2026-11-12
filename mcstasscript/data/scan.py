@@ -398,6 +398,16 @@ class ScanMonitorView:
         self.scan = scan
         self.monitor = monitor
 
+    def stack(self, *, max_bytes=None):
+        """Load and validate binned point data into an explicit dense stack.
+
+        ``max_bytes`` optionally limits the estimated output allocation. Missing
+        points and unavailable quantities are represented by NaN and validity
+        masks, never by fabricated zero measurements.
+        """
+        from .scan_stack import stack_monitor
+        return stack_monitor(self, max_bytes=max_bytes)
+
     @property
     def point_ids(self):
         return np.asarray([point.point_id for point in self.scan.points], dtype=object)

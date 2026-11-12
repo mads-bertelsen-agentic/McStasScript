@@ -17,6 +17,33 @@ and read their output, see :doc:`../tutorial/McStasScript_tutorial_7_native_scan
 For execution-free summary analysis and plotting, see
 :doc:`../tutorial/McStasScript_tutorial_8_scan_analysis`.
 
+Validated detector stacking
+---------------------------
+
+Full binned detector arrays can be loaded and stacked explicitly::
+
+   stacked = scan.dataset("PSD").stack(max_bytes=100_000_000)
+   print(stacked.dims, stacked.Intensity.shape)
+   print(stacked.coordinates, stacked.point_ids)
+   valid_errors = stacked.validity["Error"]
+
+Known grid plans use logical scan axes first; trajectories and scans without a
+known plan use a ``point`` axis. Detector dimensions are named ``detector_x``
+and, for 2D data, ``detector_y``; a ``_detector`` suffix is added if a detector
+name collides with a scan axis. Arrays can be indexed by grid index directly:
+``stacked.Intensity[0, 1]`` selects the detector at the first two grid-axis
+indices. Original datasets remain accessible through ``scan.points``.
+
+Stacking loads full point data. Shapes, coordinates, limits and available unit
+metadata must agree; incompatible monitors raise a point-specific error and event
+lists are not stacked. Missing points and quantities without verified availability
+are represented by NaN with a false quantity-specific validity mask.
+``estimated_bytes`` estimates the dense output arrays and point-ID array; it
+excludes loaded source data and Python overhead. ``max_bytes`` rejects an
+allocation exceeding that estimate before creating the dense output arrays.
+``detector_edges`` contains detector limits or edges when known; scan coordinates
+and detector bin centres are in ``coordinates``.
+
 Loading Native Scans
 --------------------
 
