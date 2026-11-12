@@ -46,6 +46,7 @@ Documentation
    tutorial/McStasScript_tutorial_6_Diagnostics.ipynb
    tutorial/McStasScript_tutorial_7_native_scans.ipynb
    tutorial/McStasScript_tutorial_8_scan_analysis.ipynb
+   tutorial/McStasScript_tutorial_9_scan_execution.ipynb
    
 .. toctree::
    :caption: McStas Union Tutorial
